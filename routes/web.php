@@ -18,6 +18,13 @@ use App\Http\Controllers\ReportController;
 
 Auth::routes();
 
+Route::get('/register', function() {
+    return redirect()->route('login');
+});
+Route::post('/register', function() {
+    return redirect()->route('login');
+});
+
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 /**
