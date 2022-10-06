@@ -70,10 +70,10 @@ class GoogleOAuthController extends Controller
 
         // Set up Google API Client
         $client = new Client();
-        $client->setAuthConfig(env('GOOGLE_CLIENT_SECRET', false));
+        $client->setAuthConfig(config('app.oauth_secret'));
         $client->addScope(SearchConsole::WEBMASTERS_READONLY);
         $client->addScope(AnalyticsData::ANALYTICS_READONLY);
-        $client->setRedirectUri(env('GOOGLE_OAUTH_URL', 'http://localhost:8000/oauthresponse'));
+        $client->setRedirectUri(config('app.oauth_url'));
 
         // Return client
         return $client;
