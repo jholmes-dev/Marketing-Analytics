@@ -69,12 +69,12 @@
                 <div class="row">
                     
                     @hasSection('sidebar')
-                        <div class="sidebar col-4">
+                        <div class="sidebar col-lg-4 mb-4">
                             @yield('sidebar')
                         </div>
                     @endif
 
-                    <div class="main-content @hasSection('sidebar') col-8 @endif">
+                    <div class="main-content @hasSection('sidebar') col-lg-8 @endif">
                         <x-messages.status />
                         @yield('content')
                     </div>
