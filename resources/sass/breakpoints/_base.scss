@@ -1,0 +1,141 @@
+/*
+** Base Stylesheet
+*****************
+** General
+*****************/
+
+iframe, img {
+    max-width: 100%;
+}
+
+/*****************
+** Properties
+*****************/
+
+#propertiesList {
+
+    .pl-items {
+
+        .pl-item {
+            background: #f0f4ff;
+            padding: .5rem;
+        }
+    }
+    .pl-search-hide {
+        display: none;
+    }
+}
+
+/*****************
+** REPORT STYLES
+*****************/
+
+#reportBody {
+    max-width: 1000px;
+    background: #eceff1;
+    margin: 0 auto;
+    box-shadow: 0 0 8px #d7d7d7;
+    font-size: 1.125rem;
+
+    .report-info-section {
+        text-align: center;
+        padding: 1rem;
+        font-size: 1.125rem;
+        line-height: 1.2;
+        margin-top: 1rem;
+
+        h3, p {
+            margin: 0;
+        }
+    }
+
+    .report-info-box {
+        background: white;
+        padding: .75rem 1.5rem;
+        position: relative;
+
+        p {
+            margin: 0;
+            line-height: 1.4;
+        }
+        .rib-body {
+            font-size: 2rem;
+        }
+        .rib-footer {
+            font-size: 1rem;
+        }
+        .rib-tooltip {
+            position: absolute;
+            bottom: 0px;
+            right: 5px;
+        }
+    }
+
+    .report-header {
+
+        .report-logo {
+            text-align: center;
+            padding: 1rem 2rem;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            img {
+                max-height: 150px;
+            }
+        }
+        .report-info {
+            background: #263238;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 1.5rem 2.5rem;
+
+            p {
+                margin: 0;
+            }
+        }
+    }
+
+    .report-trafficAndAudience {
+        .rt-session-wrapper {
+            padding-bottom: 19px!important;
+        }
+    }
+
+    .report-devicesAndBrowsers {
+
+        .rd-device-wrapper {
+            padding-bottom: 19px!important;
+        }
+    }
+
+    table {
+        font-size: .875rem;
+
+        thead {
+            background: #263238;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+    }
+
+    #reportFooter {
+        background: #263238;
+        color: white;
+        padding: 2rem 0 .5rem;
+        margin: 2rem 0 0;
+
+        h2 {
+            color: #263238;
+            background: white;
+            padding: .5rem 2rem;
+        }
+        p {
+            margin: 1rem 2rem;
+        }
+    }
+
+}
