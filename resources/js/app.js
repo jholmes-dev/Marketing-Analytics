@@ -1,6 +1,10 @@
 import './bootstrap';
 import '@popperjs/core';
 
+import.meta.glob([
+    '../images/**',
+]);
+
 // Property search functionality
 $('#propertySearch').change(function() {
     
