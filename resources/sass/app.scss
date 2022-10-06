@@ -1,0 +1,32 @@
+// Fonts
+@import url('https://fonts.bunny.net/css?family=Nunito');
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import 'bootstrap/scss/bootstrap';
+
+// Breakpoints
+@import 'breakpoints/base';
+
+@media screen and (min-width: 576px) {
+	@import 'breakpoints/576up';
+}
+
+@media screen and (min-width: 768px) {
+	@import 'breakpoints/768up';
+}
+
+@media screen and (min-width: 992px) {
+	@import 'breakpoints/992up';
+}
+
+@media screen and (min-width: 1200px) {
+	@import 'breakpoints/1200up';
+}
+
+@media screen and (min-width: 1400px) {
+	@import 'breakpoints/1400up';
+} 
