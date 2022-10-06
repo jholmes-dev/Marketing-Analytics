@@ -1,5 +1,5 @@
 <div class="card">
-    <div class="card-header">Existing Properties</div>
+    <div class="card-header d-flex justify-content-between align-items-center"><span>Existing Properties</span> <a href="{{ route('property.create.index') }}"><i class="bi bi-plus-circle fs-5"></i></a></div>
 
     <div class="card-body p-0">
 

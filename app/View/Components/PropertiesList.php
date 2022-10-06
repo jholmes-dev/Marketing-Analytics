@@ -22,7 +22,7 @@ class PropertiesList extends Component
      */
     public function __construct()
     {
-        $this->properties = Property::all();
+        $this->properties = Property::orderBy('name')->get();
     }
 
     /**
