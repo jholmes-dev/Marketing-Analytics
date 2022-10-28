@@ -53,7 +53,7 @@
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">Generated On</th>
+                <th scope="col">Month</th>
                 <th scope="col">Start Date</th>
                 <th scope="col">End Date</th>
                 <th scope="col">Expiration Date</th>
@@ -63,8 +63,16 @@
         <tbody>
 
             @foreach ($sortedReports as $report)
+
+            @php
+                if ($report->report_id !== null) 
+                {
+                    continue; // Filter out all comparison reports
+                }
+            @endphp
+
             <tr>
-                <th scope="row">{{ $report->created_at }}</th>
+                <th scope="row">{{ date('F, Y', strtotime($report->start_date)) }}</th>
                 <td>{{ $report->start_date }}</td>
                 <td>{{ $report->end_date }}</td>
                 <td>{{ $report->exp_date ?? 'Not Set' }}</td>
