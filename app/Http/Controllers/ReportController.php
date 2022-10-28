@@ -99,8 +99,13 @@ class ReportController extends Controller
      */
     public function deleteReport($id) 
     {
-
+        // Delete report & comparison report
         $report = Report::findOrFail($id);
+
+        if ($report->comparisonReport !== null) {
+            $report->comparisonReport->delete();
+        }
+
         $report->delete();
         return back()->with('success', 'The report has been deleted.');
 
