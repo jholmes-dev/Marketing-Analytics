@@ -10,7 +10,7 @@
 
     @if (isset($footer) && $footer !== '') 
     <div class="rib-footer">
-        <p>{{ $footer }}</p>
+        <p>{!! $footer !!}</p>
     </div>
     @endif
 
