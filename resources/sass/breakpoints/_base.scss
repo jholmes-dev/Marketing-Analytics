@@ -51,7 +51,7 @@ iframe, img {
 
     .report-info-box {
         background: white;
-        padding: .75rem 1.5rem;
+        padding: .75rem 1.5rem 1rem;
         position: relative;
 
         p {
@@ -62,7 +62,9 @@ iframe, img {
             font-size: 2rem;
         }
         .rib-footer {
-            font-size: 1rem;
+            position: absolute;
+            bottom: 0;
+            font-size: .875rem;
         }
         .rib-tooltip {
             position: absolute;
@@ -100,7 +102,7 @@ iframe, img {
 
     .report-trafficAndAudience {
         .rt-session-wrapper {
-            padding-bottom: 19px!important;
+            padding-bottom: 20px!important;
         }
     }
 
