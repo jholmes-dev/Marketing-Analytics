@@ -39,7 +39,7 @@ class InfoBox extends Component
      *
      * @return void
      */
-    public function __construct($title, $content, $footer = '', $tooltip = '')
+    public function __construct($title, $content, $comparisonText, $footer = '', $tooltip = '')
     {
         $this->title = $title;
         $this->content = $content;

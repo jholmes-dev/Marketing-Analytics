@@ -48,14 +48,33 @@ class ReportController extends Controller
         $input = $request->validated();
         $data = $this->reportService->getReportData($parentProperty, $input['start-date'], $input['end-date'], $input['exp-date']);
 
-        // Generate report
+        // Generate parent report
         if ($data['status']) {
-            $report = $this->reportService->createReport($data);
+            $parentReport = $this->reportService->createReport($data);
         } else {
             return back()->with('GoogleAPIErrors', $data['error']->getErrors());
         }
 
-        // Redirect user to the report
+        // Calculate time and get data for comparison report
+        $startTime = strtotime($input['start-date']);
+        $endTime = strtotime($input['end-date']);
+        $timeDifference = $endTime - $startTime;
+        $comparisonEnd = $startTime - 86400; // 1 day before report start time
+        $comparisonStart = $comparisonEnd - $timeDifference;
+
+        $comparisonData = $this->reportService->getReportData($parentProperty, date('Y-m-d', $comparisonStart), date('Y-m-d', $comparisonEnd), $input['exp-date']);
+
+        // Generate comparison report
+        if ($comparisonData['status']) {
+            $comparisonReport = $this->reportService->createReport($comparisonData);
+        } else {
+            return back()->with('GoogleAPIErrors', $comparisonData['error']->getErrors());
+        }
+
+        // Attach comparison report to parent
+        $parentReport->comparisonReport()->save($comparisonReport);
+
+        // Redirect user back to the profile page
         return back()->with('success', 'The report has been successfully generated!');
 
     }

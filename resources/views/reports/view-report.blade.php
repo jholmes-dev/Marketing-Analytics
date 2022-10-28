@@ -54,7 +54,8 @@
                         <x-report.info-box
                             title="Total Users"
                             :content="number_format($report->total_users)"
-                            tooltip="Users who have initiated at least one session during the date range."    
+                            tooltip="The total number of active users."    
+                            :footer="$report->getUsersComparisonString()"
                         >
                         </x-report.info-box>
 
@@ -64,7 +65,8 @@
                         <x-report.info-box
                             title="Engagement Rate"
                             content="{{ $report->engagement_rate * 100 }}%"
-                            tooltip="The average length of a Session."    
+                            tooltip="The percentage of engaged sessions (Engaged sessions divided by Sessions)."  
+                            :footer="$report->getEngagementRateComparisonString()"  
                         >
                         </x-report.info-box>
 
@@ -75,7 +77,8 @@
                         <x-report.info-box
                             title="Sessions"
                             :content="number_format($report->sessions)"
-                            tooltip="Total number of Sessions within the date range. A session is the period time a user is actively engaged with your website, app, etc."    
+                            tooltip="The number of sessions that began on your site."  
+                            :footer="$report->getSessionsComparisonString()" 
                         >
                         </x-report.info-box>
 
@@ -85,7 +88,8 @@
                         <x-report.info-box
                             title="Events per session"
                             :content="$report->events_per_session"
-                            tooltip="Pages/Session (Average Page Depth) is the average number of pages viewed during a session. Repeated views of a single page are counted."    
+                            tooltip="The average number of times your users triggered an event during their sessions."
+                            :footer="$report->getEventsPerSessionComparisonString()"    
                         >
                         </x-report.info-box>
 
@@ -96,7 +100,8 @@
                         <x-report.info-box
                             title="Views"
                             :content="number_format($report->page_views)"
-                            tooltip="Pageviews is the total number of pages viewed. Repeated views of a single page are counted."    
+                            tooltip="The number of web pages your users saw. Repeated views of a single screen or page are counted."
+                            :footer="$report->getViewsComparisonString()"    
                         >
                         </x-report.info-box>
 
@@ -106,7 +111,8 @@
                         <x-report.info-box
                             title="Sessions per user"
                             :content="$report->sessions_per_user"
-                            tooltip="The percentage of single-page sessions in which there was no interaction with the page. A bounced session has a duration of 0 seconds."    
+                            tooltip="The average number of sessions per user."
+                            :footer="$report->getSessionsPerUserComparisonString()"    
                         >
                         </x-report.info-box>
 
@@ -119,7 +125,7 @@
             <div class="col-12 col-lg-7 rt-sessions">
 
                 <div class="rt-session-wrapper bg-white p-3">
-                    <canvas id="sessionsGraph" width="100" height="53"></canvas>
+                    <canvas id="sessionsGraph" width="100" height="55"></canvas>
                 </div>
 
             </div>
@@ -151,7 +157,7 @@
 
             <div class="col-12 report-info-section">
                 <h3>Visitor Acquisition</h3>
-                <p>This section shows where your online traffic comes from and what search queries users type into the search engine to arrive your website.</p>
+                <p>This section shows where your online traffic comes from and what search queries users type into the search engine to arrive at your website.</p>
             </div>
 
             <div class="col-12 col-lg-6 rd-query">
@@ -305,22 +311,43 @@
 
     function generateSessionsGraph() 
     {
-        @php $dateSessionData = $report->getFormattedArray('date_session', true); @endphp
+        @php 
+            $dateSessionData = $report->getFormattedArray('date_session', true); 
+            
+            if ($report->comparisonReport !== null) {
+                $comparisonDateSessionData = $report->comparisonReport->getFormattedArray('date_session', true);
+            }
+        @endphp
         const sessionsGraph = new Chart($('#sessionsGraph'), {
             type: 'line',
             data: {
                 labels: [ {!! $dateSessionData[0] !!} ],
-                datasets: [{
-                    label: 'Sessions',
-                    data: [ {!! $dateSessionData[1] !!} ],
-                    backgroundColor: [
-                        '#0d6efd'
-                    ],
-                    borderColor: [
-                        '#0d6efd'
-                    ],
-                    borderWidth: 2
-                }]
+                datasets: [
+                    {
+                        label: 'Current Period',
+                        data: [ {!! $dateSessionData[1] !!} ],
+                        backgroundColor: [
+                            '#0d6efd'
+                        ],
+                        borderColor: [
+                            '#0d6efd'
+                        ],
+                        borderWidth: 3
+                    },
+                    @if ($report->comparisonReport !== null)
+                    {
+                        label: 'Previous Period',
+                        data: [ {!! $comparisonDateSessionData[1] !!} ],
+                        backgroundColor: [
+                            'orange'
+                        ],
+                        borderColor: [
+                            'orange'
+                        ],
+                        borderWidth: 1
+                    }
+                    @endif
+                ]
             },
             options: {
                 scales: {

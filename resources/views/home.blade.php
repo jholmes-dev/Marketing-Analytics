@@ -32,6 +32,13 @@
                 <tbody>
         
                     @foreach ($reports as $report)
+                    @php
+                        if ($report->report_id !== null) 
+                        {
+                            continue; // Filter out all comparison reports
+                        }
+                    @endphp
+
                     <tr>
                         <th scope="row">{{ $report->property->name }}</th>
                         <td>{{ $report->start_date }}</td>
