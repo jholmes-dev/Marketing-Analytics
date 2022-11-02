@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\GoogleOAuthService;
 use Illuminate\Http\Request;
 use Google\Client;
 use Google\Service\SearchConsole;
@@ -9,6 +10,17 @@ use Google\Service\AnalyticsData;
 
 class GoogleOAuthController extends Controller
 {
+
+    /**
+     * The instance's Google Client
+     */
+    public $client;
+
+    /**
+     * The the OAuth Service helper class
+     */
+    public $oauthService;
+
     /**
      * Create a new controller instance.
      *
@@ -17,6 +29,7 @@ class GoogleOAuthController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->oauthService = new GoogleOAuthService();
     }
 
     /**
@@ -26,11 +39,8 @@ class GoogleOAuthController extends Controller
     public function googleOAuth2Request() 
     {
 
-        // Set up Google API Client
-        $client = $this->generateOAuthClient();
-
         // Generate URL
-        $auth_url = $client->createAuthUrl();
+        $auth_url = $this->oauthService->client->createAuthUrl();
 
         // Redirect user
         return redirect()->away($auth_url);
@@ -43,40 +53,15 @@ class GoogleOAuthController extends Controller
      */
     public function googleOAuth2Response(Request $request) 
     {
-
-        // Set up Google API Client
-        $client = $this->generateOAuthClient();
         
-        if (isset($request->code) && !empty($request->code)) {
-
-            $client->authenticate($request->code);
-            $request->session()->put('access_token', $client->getAccessToken());
-            
+        if (isset($request->code) && !empty($request->code)) 
+        {
+            $this->oauthService->setOAuthToken($request->code);
+            $request->session()->put('access_token', $this->oauthService->generateAccessToken());
             return redirect(route('home'))->with('success', 'Google API authentication has been confirmed!');
-
         }
 
         return redirect(route('home'))->with('error', 'Google API authentication has failed!');
-
-    }
-
-    /**
-     * Generates a Google API Client for use during OAuth verification
-     * 
-     * @return Google\Client
-     */
-    private function generateOAuthClient() 
-    {
-
-        // Set up Google API Client
-        $client = new Client();
-        $client->setAuthConfig(config('app.oauth_secret'));
-        $client->addScope(SearchConsole::WEBMASTERS_READONLY);
-        $client->addScope(AnalyticsData::ANALYTICS_READONLY);
-        $client->setRedirectUri(config('app.oauth_url'));
-
-        // Return client
-        return $client;
 
     }
 

@@ -62,8 +62,15 @@ Route::controller(ReportController::class)->middleware(['auth'])->name('report.'
     // Generate a new report
     Route::post('/property/{id}/report/generate', 'generateReport')->name('generate');
 
+    // Batch report generation
+    Route::get('report/batch', 'batchGenerateView')->name('batch.view');
+    Route::post('report/batch', 'batchGenerateCreate')->name('batch.create');
+
     // Delete a report
     Route::post('/report/{id}/delete', [ReportController::class, 'deleteReport'])->name('delete');
+
+    // View a batch report batch
+    Route::get('view/batch/{id}', 'viewBatchReportJob')->name('batch.viewjob');
 
 });
 
