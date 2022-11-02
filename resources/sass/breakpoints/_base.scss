@@ -8,6 +8,11 @@ iframe, img {
     max-width: 100%;
 }
 
+.sm-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 /*****************
 ** Properties
 *****************/
@@ -140,4 +145,16 @@ iframe, img {
         }
     }
 
+}
+
+.batch-card {
+    .batch-complete-title {
+        font-weight: bold;
+        color: $success;
+    }
+}
+.batch-completed {
+    .batch-complete-title {
+        display: block!important;
+    }
 }
