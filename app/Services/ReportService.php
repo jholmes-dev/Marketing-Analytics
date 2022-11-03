@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Report;
 use App\Models\Property;
+use App\Services\GoogleOAuthService;
 
 use Google\Client;
 
@@ -26,19 +27,25 @@ use Google\Service\SearchConsole\SearchAnalyticsQueryRequest;
 class ReportService {
     
     /**
-     * @param Google\Client
+     * @var String the Google API access token
+     * 
+     */
+    public $token;
+
+    /**
+     * @var Google\Client
      * 
      */
     public $client;
 
     /**
-     * @param Google\Service\AnalyticsData
+     * @var Google\Service\AnalyticsData
      * 
      */
     public $analyticsService;
 
     /**
-     * @param Google\Service\AnalyticsData
+     * @var Google\Service\AnalyticsData
      * 
      */
     public $searchConsoleService;
@@ -70,16 +77,22 @@ class ReportService {
      */
     public function __construct($token) 
     {
+        $this->token = $token;
+    } 
+    
+    public function prepServices()
+    {
         // Generate Client
-        $this->client = new Client();
-        $this->client->setAccessToken($token);
+        $oauthService = new GoogleOAuthService();
+        $this->client = $oauthService->generateOAuthClient();
+        $this->client->setAccessToken($this->token);
 
         // Generate Analytics Service
         $this->analyticsService = new AnalyticsData($this->client);
 
         // Generate Search Console Service
         $this->searchConsoleService = new SearchConsole($this->client);
-    } 
+    }
 
     /**
      * Generates a report from the passed data array
@@ -125,7 +138,7 @@ class ReportService {
     private function applyDataFilters($data) 
     {
 
-        // Filter out (not set) from city data
+        // Filter out `(not set)` from city data
         foreach ($data['cityData'] as $city => $imp) {
             if ($city == '(not set)') {
                 unset($data['cityData'][$city]);
@@ -302,17 +315,27 @@ class ReportService {
 
         }
 
-        $responseRow = $response->getRows()[0];
+        if ($response->rowCount !== null) {
+            $responseRow = $response->getRows()[0];
 
-        return Array(
-            'status' => true,
-            'totalUsers' => $responseRow->getMetricValues()[0]->getValue(),
-            'sessions' => $responseRow->getMetricValues()[1]->getValue(),
-            'screenPageViews' => $responseRow->getMetricValues()[2]->getValue(),
-            'engagementRate' => $responseRow->getMetricValues()[3]->getValue(),
-            'eventsPerSession' => $responseRow->getMetricValues()[4]->getValue(),
-            'sessionsPerUser' => $responseRow->getMetricValues()[5]->getValue(),
-        );
+            return Array(
+                'status' => true,
+                'totalUsers' => $responseRow->getMetricValues()[0]->getValue(),
+                'sessions' => $responseRow->getMetricValues()[1]->getValue(),
+                'screenPageViews' => $responseRow->getMetricValues()[2]->getValue(),
+                'engagementRate' => $responseRow->getMetricValues()[3]->getValue(),
+                'eventsPerSession' => $responseRow->getMetricValues()[4]->getValue(),
+                'sessionsPerUser' => $responseRow->getMetricValues()[5]->getValue(),
+            );
+
+        } else {
+
+            return Array(
+                'status' => false,
+                'error' => 'No data found for selected date range'
+            );
+
+        }
 
     }
     
