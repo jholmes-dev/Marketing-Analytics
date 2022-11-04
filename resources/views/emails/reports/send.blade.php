@@ -4,7 +4,7 @@
 
 	<p style="margin:0 0 16px 0;">How are you? I hope all is well.</p>
 		
-	<p style="margin:0 0 16px 0;">Your current SEO report can be accessed here:<br/><a href="{{ $reportUrl }}" target="_blank">{{ $reportUrl }}</a></p>
+	<p style="margin:0 0 16px 0;">Your {{ $reportMonth }} SEO report can be accessed here:<br/><a href="{{ $reportUrl }}" target="_blank">{{ $reportUrl }}</a></p>
 		
 	<p style="margin:0 0 16px 0;">What are you seeing in the office? Are there any updates to be made to the website, social media, etc. right now? Let me know how I can help!</p>
 		
