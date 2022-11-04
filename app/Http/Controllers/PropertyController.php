@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Property;
+use App\Models\Report;
 use App\Http\Requests\Property\StorePropertyRequest;
+use App\Http\Requests\Property\UpdateEmailFieldsRequest;
 use App\Services\PropertyService;
+use App\Mail\Report\MailReport;
 
 class PropertyController extends Controller
 {
@@ -65,6 +68,57 @@ class PropertyController extends Controller
             return back()->with('error', 'Access could not be verified. Please confirm you entered the Analytics Property ID correctly, and that the Analytics Service User has been added to the property with admin permissions.');
         }
 
+    }
+
+    /**
+     * Enables batch email setting
+     * 
+     * @param Integer $id : The target property's ID
+     */
+    public function enableBatchEmail($id) 
+    {
+        $this->propertyService->enableBatchEmail($id);
+        return back()->with('success', 'Batch email has been enabled');
+    }
+
+    /**
+     * Disables batch email setting
+     * 
+     * @param Integer $id : The target property's ID
+     */
+    public function disableBatchEmail($id) 
+    {
+        $this->propertyService->disableBatchEmail($id);
+        return back()->with('success', 'Batch email has been disabled');
+    }
+
+    /**
+     * Updates fields related to batch email settings
+     * 
+     * @param App\Http\Requests\Property\UpdateEmailFieldsRequest $request
+     */
+    public function updateBatchEmailSettings(UpdateEmailFieldsRequest $request, $id) 
+    {
+        $input = $request->validated();
+        $this->propertyService->updateBatchEmailSettings($id, $input['client_name'], $input['client_email']);
+        return back()->with('success', 'Batch email settings have been updated');
+    }
+
+    /**
+     * Returns a preview of the property's mailable report
+     * 
+     * @param Integer $id : The property's ID
+     */
+    public function previewReportEmail($id, $reportId = NULL)
+    {
+        $property = Property::findOrFail($id);
+
+        if ($reportId !== NULL) 
+        {
+            $report = Report::findOrFail($reportId);
+            return new MailReport($report);
+        }
+        return new MailReport();
     }
 
 }

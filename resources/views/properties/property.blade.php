@@ -112,4 +112,70 @@
     
 </div>
 
+<div class="card mt-3">
+
+    <div class="card-header align-items-center d-flex">
+        Batch Email Settings 
+        <i class="bi bi-question-circle-fill ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Allow the tool to email the client their report from the batch report email page."></i> 
+        @if ($property->batch_email)
+            <a href="#" class="btn btn-danger btn-sm ms-auto" onclick="event.preventDefault();document.getElementById('disable-batch-email').submit();">Disable</a>
+        @else
+            <a href="#" class="btn btn-primary btn-sm ms-auto" onclick="event.preventDefault();document.getElementById('enable-batch-email').submit();">Enable</a>
+        @endif
+    </div>
+
+    <form id="enable-batch-email" action="{{ route('property.email.enable', $property->id) }}" method="POST" class="d-none">
+        @csrf  
+    </form>
+
+    <form id="disable-batch-email" action="{{ route('property.email.disable', $property->id) }}" method="POST" class="d-none">
+        @csrf  
+    </form>
+    
+    @if ($property->batch_email)
+    <div class="card-body">
+
+        <form action="{{ route('property.email.update', $property->id) }}" method="POST">
+            @csrf
+
+            <div class="mb-3">
+                <label for="clientName">Email Recipient Name</label>
+                <input name="client_name" id="clientName" type="text" class="form-control @error('client_name') is-invalid @enderror" value="{{ $property->client_name }}" />
+
+                @error('client_name')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+            </div>
+
+            <div class="mb-3">
+                <label for="clientEmail">Client Email <i class="bi bi-question-circle" data-bs-toggle="tooltip" data-bs-placement="right" title="The report will be sent to this email."></i></label>
+                <input name="client_email" id="clientEmail" type="email" class="form-control @error('client_email') is-invalid @enderror" value="{{ $property->client_email }}" />
+
+                @error('client_email')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between">
+
+                <div>
+                    <a href="{{ route('property.email.preview', $property->id); }}" target="_blank">Preview Email</a>
+                </div>
+
+                <div>
+                    <input type="submit" class="btn btn-primary"  value="Update" />
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+    @endif
+
+</div>
+
 @endsection
