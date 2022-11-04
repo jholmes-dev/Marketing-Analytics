@@ -48,7 +48,8 @@ class MailReport extends Mailable
             ->subject($reportMonth . ' SEO Report')
             ->with([
                 'clientName' => $this->clientName,
-                'reportUrl' => $this->reportUrl
+                'reportUrl' => $this->reportUrl,
+                'reportMonth' => $reportMonth
             ]);
     }
 }
