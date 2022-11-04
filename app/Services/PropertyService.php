@@ -33,5 +33,44 @@ class PropertyService {
         return true;
 
     }
+
+    /**
+     * Enables a propery's batch email setting
+     * 
+     * @param Integer $id : The affected property's ID
+     */
+    public function enableBatchEmail($id)
+    {
+        $property = Property::findOrFail($id);
+        $property->batch_email = true;
+        $property->save();
+    }
+
+    /**
+     * Disables a propery's batch email setting
+     * 
+     * @param Integer $id : The affected property's ID
+     */
+    public function disableBatchEmail($id)
+    {
+        $property = Property::findOrFail($id);
+        $property->batch_email = false;
+        $property->save();
+    }
+
+    /**
+     * Updates the fields related to batch emails
+     * 
+     * @param Integer $id : The affect property's ID
+     * @param String $name : The field for insertion into client_name
+     * @param String $email : The field for insertion into client_email
+     */
+    public function updateBatchEmailSettings($id, $name, $email)
+    {
+        $property = Property::findOrFail($id);
+        $property->client_name = $name;
+        $property->client_email = $email;
+        $property->save();
+    }
     
 }

@@ -17,7 +17,19 @@ class Property extends Model
         'name',
         'analytics_id',
         'logo',
-        'url'
+        'url',
+        'client_name',
+        'client_email',
+        'batch_email'
+    ];
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'batch_email' => false,
     ];
 
     /**
