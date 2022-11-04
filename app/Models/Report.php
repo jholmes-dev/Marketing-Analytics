@@ -16,6 +16,15 @@ class Report extends Model
      * 
      */
     protected $guarded = [];
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'email_sent' => false,
+    ];
     
     /**
      * Belongs to function for the parent Property
@@ -42,6 +51,36 @@ class Report extends Model
     public function parentReport()
     {
         return $this->belongsTo(Report::class);
+    }
+
+    /**
+     * Returns if the report is a comparison report
+     * 
+     * @return Boolean
+     */
+    public function isComparisonReport()
+    {
+        return (!$this->report_id === NULL);
+    }
+
+    /**
+     * Returns if the report is expired
+     * 
+     * @return Boolean
+     */
+    public function isExpired()
+    {
+        // Not expired if expiration date is not set
+        if ($this->exp_date === NULL) 
+        {
+            return false;
+        }
+
+        // Compare today to expiration date
+        $today = strtotime(date('Y/m/d'));
+        $expDate = strtotime($this->exp_date);
+
+        return ($today >= $expDate);
     }
 
     /**
@@ -206,6 +245,48 @@ class Report extends Model
         $comparisonPercent = round(abs(1 - ($current / $previous)), 4);
 
         return '<span class="' . $comparisonColor . '">' . $comparisonArrow . (String)($comparisonPercent * 100) . '%</span>';
+
+    }
+
+    /**
+     * Determines if the report is eligible for batch report emails
+     * 
+     * @return Boolean
+     */
+    public function isEligibleForBatchEmail()
+    {
+        // Needs to have batch email enabled
+        if (!$this->property->batch_email)
+        {
+            return false;
+        }
+
+        // Needs to have valid batch email fields
+        if ($this->property->client_name === NULL || $this->property->client_email === NULL)
+        {
+            return false;
+        }
+
+        // Needs to not have already had its report sent already
+        if ($this->email_sent)
+        {
+            return false;
+        }
+
+        // Needs to not be a comparison report
+        if ($this->isComparisonReport())
+        {
+            return false;
+        }
+
+        // Needs to not be expired
+        if ($this->isExpired())
+        {
+            return false;
+        }
+
+        // Return true if all checks passed
+        return true;
 
     }
 

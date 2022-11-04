@@ -41,6 +41,10 @@
                             <a class="nav-link" href="{{ route('report.batch.view') }}">Generate Report Batch</a>
                         </li>
 
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('batch.email.generate') }}">Batch Emails</a>
+                        </li>
+
                     </ul>
 
                     <!-- Right Side Of Navbar -->

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GoogleOAuthController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\BatchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +52,16 @@ Route::controller(PropertyController::class)->name('property.')->group(function(
     Route::get('/property/new/', 'newIndex')->name('create.index');
     Route::post('/property/new/', 'newStore')->name('create.store');
 
+    // Toggle batch email flag
+    Route::post('/property/{id}/email/enable', 'enableBatchEmail')->name('email.enable');
+    Route::post('/property/{id}/email/disable', 'disableBatchEmail')->name('email.disable');
+
+    // Update batch email settings
+    Route::post('/property/{id}/email/update', 'updateBatchEmailSettings')->name('email.update');
+
+    // Preview a property's email template
+    Route::get('/property/{id}/email/preview/{reportId?}', 'previewReportEmail')->name('email.preview');
+
 });
 
 /**
@@ -63,18 +74,34 @@ Route::controller(ReportController::class)->middleware(['auth'])->name('report.'
     Route::post('/property/{id}/report/generate', 'generateReport')->name('generate');
 
     // Batch report generation
-    Route::get('report/batch', 'batchGenerateView')->name('batch.view');
-    Route::post('report/batch', 'batchGenerateCreate')->name('batch.create');
+    Route::get('/report/batch', 'batchGenerateView')->name('batch.view');
+    Route::post('/report/batch', 'batchGenerateCreate')->name('batch.create');
 
     // Delete a report
     Route::post('/report/{id}/delete', [ReportController::class, 'deleteReport'])->name('delete');
 
     // View a batch report batch
-    Route::get('view/batch/{id}', 'viewBatchReportJob')->name('batch.viewjob');
+    Route::get('/view/batch/{id}', 'viewBatchReportJob')->name('batch.viewjob');
 
 });
 
-// View Report
+// View Report Public
 Route::get('/report/{id}', [ReportController::class, 'getReport'])->name('report.view');
 
-Route::get('/test', [ReportController::class, 'test']);
+/**
+ * Batch related routes
+ * 
+ */
+Route::controller(BatchController::class)->middleware(['auth'])->name('batch.')->prefix('batch')->group(function() {
+
+    // Generate a list of batch emails for a month
+    Route::get('/email/generate', 'generateEmailListView')->name('email.generate');
+    Route::post('/email/generate', 'generateEmailListRedirect')->name('email.generate.redirect');
+
+    // View list of eligible batch emails for a given month/year
+    Route::get('/email/view/{year}/{month}', 'showBatchEmailList')->name('email.view');
+
+    // Send emails from batch
+    Route::post('/email/send', 'sendBatchEmails')->name('email.send');
+
+});
