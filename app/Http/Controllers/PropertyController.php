@@ -121,4 +121,15 @@ class PropertyController extends Controller
         return new MailReport();
     }
 
+    /**
+     * Toggles a property's dark logo background option
+     * 
+     * @param Integer $id : The target property's ID
+     */
+    public function toggleDarkLogoBackground($id) 
+    {
+        $this->propertyService->toggleDarkLogoBackground($id);
+        return back()->with('success', 'Background option has been toggled.');
+    }
+
 }
