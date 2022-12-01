@@ -104,8 +104,19 @@
         <h5><a href="https://{{ $property->url }}" target="_blank">{{ $property->url }}</a></h5>
         <h5>Analytics ID: {{ $property->analytics_id }}</h5>
 
-        <div class="mt-4 w-50 mx-auto">
-            <img src="{{ $property->logo }}" alt="{{ $property->name }} Logo" />
+        <div class="mt-4 w-60 mx-auto text-center">
+            <div class="p-3 @if ($property->logo_dark_background) bg-reportdark @endif">
+                <img src="{{ $property->logo }}" alt="{{ $property->name }} Logo" />
+            </div>
+        </div>
+
+        <div class="mt-4 text-center">
+
+            <form id="toggleLogoBackground" action="{{ route('property.logobackground.toggle', $property->id) }}" method="POST">
+                @csrf
+                <input type="submit" class="btn btn-outline-dark btn-sm" value="Toggle Dark Logo Background" />
+            </form>
+
         </div>
 
     </div>

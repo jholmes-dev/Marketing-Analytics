@@ -72,5 +72,17 @@ class PropertyService {
         $property->client_email = $email;
         $property->save();
     }
+
+    /**
+     * Toggles a property's dark logo background option
+     * 
+     * @param Integer $id : The affected property's ID
+     */
+    public function toggleDarkLogoBackground($id)
+    {
+        $property = Property::findOrFail($id);
+        $property->logo_dark_background = !$property->logo_dark_background;
+        $property->save();
+    }
     
 }
