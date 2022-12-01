@@ -59,6 +59,9 @@ Route::controller(PropertyController::class)->name('property.')->group(function(
     // Update batch email settings
     Route::post('/property/{id}/email/update', 'updateBatchEmailSettings')->name('email.update');
 
+    // Toggle property's logo background option
+    Route::post('/property/{id}/logobackground/toggle', 'toggleDarkLogoBackground')->name('logobackground.toggle');
+
     // Preview a property's email template
     Route::get('/property/{id}/email/preview/{reportId?}', 'previewReportEmail')->name('email.preview');
 

@@ -237,7 +237,7 @@ class ReportService {
             $resData = array_merge($resData, $visitorCityData);
         }
 
-        // Call and confirm query data
+        // Call and confirm query data for WMT
         $queryData = $this->getQueryData();
         if (!$queryData['status']) {
             return $queryData;

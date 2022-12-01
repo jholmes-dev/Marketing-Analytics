@@ -25,7 +25,7 @@
 
         <div class="row report-header">
             
-            <div class="col-12 col-lg-6 report-logo">
+            <div class="col-12 col-lg-6 report-logo @if ($property->logo_dark_background) bg-reportdark @endif">
                 <img src="{{ $property->logo }}" alt="{{ $property->name }}" />
             </div>
 
