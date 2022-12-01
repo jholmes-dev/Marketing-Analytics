@@ -30,6 +30,7 @@ class Property extends Model
      */
     protected $attributes = [
         'batch_email' => false,
+        'logo_dark_background' => false,
     ];
 
     /**
