@@ -92,11 +92,11 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'gefen@mdpmconsulting.com'),
-        'name' => env('MAIL_FROM_NAME', 'Gefen Kusin-Kline'),
+        'address' => env('MAIL_FROM_ADDRESS', 'sara@mdpmconsulting.com'),
+        'name' => env('MAIL_FROM_NAME', 'Sara Gold'),
     ],
 
-    'report_bcc' => env('REPORT_BCC_ADDRESS', 'gefen@mdpmconsulting.com'),
+    'report_bcc' => env('REPORT_BCC_ADDRESS', 'sara@mdpmconsulting.com'),
 
     /*
     |--------------------------------------------------------------------------
