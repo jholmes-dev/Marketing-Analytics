@@ -12,12 +12,12 @@
 
 	<div style="color:#888888;font-size: 14px;">
 	
-		<p style="margin:0;font-size:20px;font-weight:bold;">Gefen Kusin-Kline</p>
-		<p style="margin:0;">Director of SEO & Strategy</p>
+		<p style="margin:0;font-size:20px;font-weight:bold;">Sara Gold</p>
+		<p style="margin:0;">VP of Business Development</p>
 		<p style="margin:0;"><strong>MDPM Consulting</strong></p>
-		<p style="margin:0;">(214) 886-7713</p>
-		<p style="margin:0;"><a href="mailto:Gefen@mdpmconsulting.com">Gefen@mdpmconsulting.com</a></p>
-		<p style="margin:0 0 8px 0;"><a href="https://mdpmdentalmarketing.com/" target="_blank">https://mdpmdentalmarketing.com/</a></p>
+		<p style="margin:0;">(972) 781-8861</p>
+		<p style="margin:0;"><a href="mailto:sara@mdpmconsulting.com">sara@mdpmconsulting.com</a></p>
+		<p style="margin:0 0 8px 0;"><a href="https://mdpmmarketing.com/" target="_blank">https://mdpmmarketing.com</a></p>
 
 		<img src="{{ Vite::asset('resources/images/logo-main.png') }}" alt="MDPM Marketing" />
 	
