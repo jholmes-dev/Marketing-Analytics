@@ -24,6 +24,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home')->with([ 'reports' => Report::orderByDesc('created_at')->take(10)->get() ]);
+        return view('home')->with([ 
+            'reports' => Report::orderByDesc('created_at')->where('report_id', NULL)->take(20)->get() 
+        ]);
     }
 }

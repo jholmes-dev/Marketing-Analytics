@@ -19,14 +19,14 @@ class MailReport extends Mailable
      */
     protected $clientName = 'Client Name';
     protected $reportDate = '2022-01-01';
-    protected $reportUrl = 'ReportURL';
+    protected $reportUrl = 'https://ReportURL.com/ReportID';
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(Report $report)
+    public function __construct(Report $report = NULL)
     {
         if ($report !== NULL)
         {
