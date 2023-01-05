@@ -314,7 +314,7 @@
         @php 
             $dateSessionData = $report->getFormattedArray('date_session', true); 
             
-            if ($report->comparisonReport !== null) {
+            if ($report->hasValidComparisonReport()) {
                 $comparisonDateSessionData = $report->comparisonReport->getFormattedArray('date_session', true);
             }
         @endphp
@@ -334,7 +334,7 @@
                         ],
                         borderWidth: 3
                     },
-                    @if ($report->comparisonReport !== null)
+                    @if ($report->hasValidComparisonReport())
                     {
                         label: 'Previous Period',
                         data: [ {!! $comparisonDateSessionData[1] !!} ],

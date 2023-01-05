@@ -138,6 +138,13 @@ class ReportService {
     private function applyDataFilters($data) 
     {
 
+        // Filter our 'Page not found' from page data
+        foreach ($data['pageData'] as $page => $title) {
+            if (str_contains($page, 'Page not found')) {
+                unset($data['pageData'][$page]);
+            }
+        }
+
         // Filter out `(not set)` from city data
         foreach ($data['cityData'] as $city => $imp) {
             if ($city == '(not set)') {
