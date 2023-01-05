@@ -64,6 +64,28 @@ class Report extends Model
     }
 
     /**
+     * Determines if the current report has a valid comparison report
+     * 
+     * @return Boolean
+     */
+    public function hasValidComparisonReport()
+    {
+        if ($this->comparisonReport === null) {
+            return false;
+        }
+
+        // Check that the comparison report has the same available data ranges
+        $curSessionData = $this->getDatabaseArrayKeys('date_session');
+        $prevSessionData = $this->comparisonReport->getDatabaseArrayKeys('date_session');
+
+        if (count($curSessionData) == count($prevSessionData)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns if the report is expired
      * 
      * @return Boolean
@@ -148,7 +170,7 @@ class Report extends Model
      */
     public function getUsersComparisonString()
     {
-        if ($this->comparisonReport === null) {
+        if (!$this->hasValidComparisonReport()) {
             return '';
         }
         return $this->formatDataToHtml($this->total_users, $this->comparisonReport->total_users);
@@ -162,7 +184,7 @@ class Report extends Model
      */
     public function getSessionsComparisonString()
     {
-        if ($this->comparisonReport === null) {
+        if (!$this->hasValidComparisonReport()) {
             return '';
         }
         return $this->formatDataToHtml($this->sessions, $this->comparisonReport->sessions);
@@ -176,7 +198,7 @@ class Report extends Model
      */
     public function getViewsComparisonString()
     {
-        if ($this->comparisonReport === null) {
+        if (!$this->hasValidComparisonReport()) {
             return '';
         }
         return $this->formatDataToHtml($this->page_views, $this->comparisonReport->page_views);
@@ -190,7 +212,7 @@ class Report extends Model
      */
     public function getEngagementRateComparisonString()
     {
-        if ($this->comparisonReport === null) {
+        if (!$this->hasValidComparisonReport()) {
             return '';
         }
         return $this->formatDataToHtml($this->engagement_rate, $this->comparisonReport->engagement_rate);
@@ -204,7 +226,7 @@ class Report extends Model
      */
     public function getEventsPerSessionComparisonString()
     {
-        if ($this->comparisonReport === null) {
+        if (!$this->hasValidComparisonReport()) {
             return '';
         }
         return $this->formatDataToHtml($this->events_per_session, $this->comparisonReport->events_per_session);
@@ -218,7 +240,7 @@ class Report extends Model
      */
     public function getSessionsPerUserComparisonString()
     {
-        if ($this->comparisonReport === null) {
+        if (!$this->hasValidComparisonReport()) {
             return '';
         }
         return $this->formatDataToHtml($this->sessions_per_user, $this->comparisonReport->sessions_per_user);
