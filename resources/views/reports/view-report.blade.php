@@ -32,7 +32,8 @@
             <div class="col-12 col-lg-6 report-info">
                 <div class="report-info-inner">
                     <h1>{{ date('F', $startDate) }} SEO Report</h1>
-                    <p>This report shows data for the time period of:<br/>{{ date('F d, Y', $startDate) }} - {{ date('F d, Y', $endDate) }}</p>
+                    <h4>{{ $property->url }}</h4>
+                    <p>{{ date('F d, Y', $startDate) }} - {{ date('F d, Y', $endDate) }}</p>
                 </div>
             </div>
 

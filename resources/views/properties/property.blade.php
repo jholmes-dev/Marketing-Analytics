@@ -42,10 +42,7 @@
     
 </div>
 
-@php
-    $sortedReports = $property->reports()->orderByDesc('created_at')->get()
-@endphp
-@if ($sortedReports->count())
+@if ($reports->count())
 <div class="card mt-4">
 
     <div class="card-header">Existing Reports</div>
@@ -62,21 +59,13 @@
         </thead>
         <tbody>
 
-            @foreach ($sortedReports as $report)
-
-            @php
-                if ($report->report_id !== null) 
-                {
-                    continue; // Filter out all comparison reports
-                }
-            @endphp
-
+            @foreach ($reports as $report)
             <tr>
                 <th scope="row">{{ date('F, Y', strtotime($report->start_date)) }}</th>
                 <td>{{ $report->start_date }}</td>
                 <td>{{ $report->end_date }}</td>
                 <td>{{ $report->exp_date ?? 'Not Set' }}</td>
-                <td><a href="{{ route('report.view', $report->id) }}" target="_blank">View</a> / <a href="/" onclick="event.preventDefault(); document.getElementById('deleteReport{{ $report->id }}').submit();">Delete</a></td>
+                <td class="text-end"><a href="{{ route('report.view', $report->id) }}" target="_blank">View</a> / <a href="/" onclick="event.preventDefault(); document.getElementById('deleteReport{{ $report->id }}').submit();">Delete</a></td>
 
                 <form id="deleteReport{{ $report->id }}" action="{{ route('report.delete', $report->id) }}" method="POST" class="d-none">
                     @csrf
