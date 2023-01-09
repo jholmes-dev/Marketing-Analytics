@@ -12,14 +12,11 @@
 @endif
 
 <div class="card">
-    <div class="card-header">{{ __('Dashboard') }}</div>
+    <div class="card-header">{{ __('Recent Reports') }}</div>
 
     <div class="card-body">
 
-
-
         @if ($reports->count())
-            <h3>Recent Reports</h3>
             <table class="table">
                 <thead>
                     <tr>
@@ -36,11 +33,7 @@
                         <th scope="row">{{ $report->property->name }}</th>
                         <td>{{ $report->start_date }}</td>
                         <td>{{ $report->end_date }}</td>
-                        <td><a href="{{ route('report.view', $report->id) }}" target="_blank">View</a> / <a href="/" onclick="event.preventDefault(); document.getElementById('deleteReport{{ $report->id }}').submit();">Delete</a></td>
-        
-                        <form id="deleteReport{{ $report->id }}" action="{{ route('report.delete', $report->id) }}" method="POST" class="d-none">
-                            @csrf
-                        </form>
+                        <td class="text-end"><a href="{{ route('report.view', $report->id) }}" target="_blank">Report</a> / <a href="{{ route('property.index', $report->property->id) }}">Property</a></td>
                     </tr>
                     @endforeach
         

@@ -33,8 +33,10 @@ class PropertyController extends Controller
      */
     public function index($id) 
     {
+        $property = Property::findOrFail($id);
         return view('properties.property', [ 
-            'property' => Property::findOrFail($id)
+            'property' => $property,
+            'reports' => $property->reports()->orderByDesc('created_at')->where('report_id', NULL)->get() 
         ]);
     }
 
