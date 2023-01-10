@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Property;
 use App\Models\Report;
 use App\Http\Requests\Property\StorePropertyRequest;
+use App\Http\Requests\Property\UpdatePropertyRequest;
 use App\Http\Requests\Property\UpdateEmailFieldsRequest;
 use App\Services\PropertyService;
 use App\Mail\Report\MailReport;
@@ -53,14 +54,11 @@ class PropertyController extends Controller
     /**
      * Store a property in the database
      * 
+     * @param App\Http\Requests\Property\StorePropertyRequest
      */
     public function newStore(StorePropertyRequest $request) 
     {
-
-        // Get validated request data
         $validated = $request->validated();
-
-        // Store in db
         $response = $this->propertyService->create($validated);
 
         // Check response
@@ -70,6 +68,30 @@ class PropertyController extends Controller
             return back()->with('error', 'Access could not be verified. Please confirm you entered the Analytics Property ID correctly, and that the Analytics Service User has been added to the property with admin permissions.');
         }
 
+    }
+
+    /**
+     * Handles update request for properties
+     * 
+     * @param Integer : Property ID
+     * @param App\Http\Requests\Property\UpdatePropertyRequest
+     */
+    public function update($id, UpdatePropertyRequest $request)
+    {
+        $validated = $request->validated();
+        $this->propertyService->update($id, $validated);
+        return back()->with('success', 'Property has been updated!');
+    }
+
+    /**
+     * Handles a property deletion request
+     * 
+     * @param Integer : Property ID
+     */
+    public function delete($id)
+    {
+        $this->propertyService->delete($id);
+        return redirect()->route('home')->with('success', 'Property has been deleted');
     }
 
     /**

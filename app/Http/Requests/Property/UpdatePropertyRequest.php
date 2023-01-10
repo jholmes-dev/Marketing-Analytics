@@ -4,7 +4,7 @@ namespace App\Http\Requests\Property;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePropertyRequest extends FormRequest
+class UpdatePropertyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,11 +24,11 @@ class StorePropertyRequest extends FormRequest
     public function rules()
     {
         return [
-            'property-name' => 'required|unique:properties,name|max:255',
-            'property-id' => 'required|unique:properties,analytics_id|max:64',
+            'property-name' => 'required|max:255',
+            'property-id' => 'required|max:64',
             'place-id' => 'required|string|max:256',
             'property-logo' => 'required|max:255',
-            'property-url' => 'required|unique:properties,url|max:255',
+            'property-url' => 'required|max:255',
         ];
     }
 }

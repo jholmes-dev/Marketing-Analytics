@@ -35,6 +35,10 @@ iframe, img {
     }
 }
 
+.pac-container {
+    z-index: 9999;
+}
+
 /*****************
 ** REPORT STYLES
 *****************/
@@ -157,7 +161,32 @@ iframe, img {
         }
     }
 
+    .review-card {
+        flex: 1 1 100%;
+        
+        .card-body {
+            display: flex;
+            flex-direction: column;
+        }
+        .review-content {
+            margin-bottom: 1.5rem;
+        }
+        .review-footer {
+            line-height: 1;
+            margin-top: auto;
+
+            .rf-time {
+                span {
+                    font-size: .875rem;
+                }
+            }
+        }
+    }
 }
+
+/*****************
+** BATCHING STYLES
+*****************/
 
 .batch-card {
     .batch-complete-title {

@@ -33,7 +33,7 @@
                     <div class="row mb-3">
 
                         <div class="col-md-3">
-                            <label for="propertyId" class="col-form-label">Property ID</label>
+                            <label for="propertyId" class="col-form-label">Analytics ID</label>
                         </div>
 
                         <div class="col">
@@ -44,6 +44,27 @@
                                 <strong>{{ $message }}</strong>
                             </span>
                             @enderror
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-3">
+
+                        <div class="col-md-3">
+                            <label for="placeId" class="col-form-label">Place ID</label>
+                        </div>
+
+                        <div class="col">
+                            <div class="input-group">
+                                <input name="place-id" id="placeId" type="text" class="form-control @error('place-id') is-invalid @enderror" />
+                                <button id="findPlaceIdButton" data-bs-toggle="modal" data-bs-target="#findPlaceIdModal" class="btn btn-outline-secondary" type="button">Find This</button>
+
+                                @error('place-id')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
                         </div>
 
                     </div>
@@ -101,10 +122,14 @@
     </div>
 </div>
 
+<x-property.find-place-id-modal 
+    submit-action="dismiss"
+/>
+
 @endsection
 
 @section('js')
-<script>
+<script type="module">
 
     $('#propertyLogo').change(function() {
         if ($('#propertyUrl').val() == '') {
