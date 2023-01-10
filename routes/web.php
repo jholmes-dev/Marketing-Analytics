@@ -52,6 +52,12 @@ Route::controller(PropertyController::class)->name('property.')->group(function(
     Route::get('/property/new/', 'newIndex')->name('create.index');
     Route::post('/property/new/', 'newStore')->name('create.store');
 
+    // Edit a property
+    Route::post('/property/{id}/edit', 'update')->name('update');
+
+    // Delete a property
+    Route::post('/property/{id}/delete', 'delete')->name('delete');
+
     // Toggle batch email flag
     Route::post('/property/{id}/email/enable', 'enableBatchEmail')->name('email.enable');
     Route::post('/property/{id}/email/disable', 'disableBatchEmail')->name('email.disable');
