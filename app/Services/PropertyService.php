@@ -17,21 +17,57 @@ class PropertyService {
     /**
      * Creates a Property model and stores it in the database
      * 
-     * @var Array $request - Validated array of request data
-     * @return bool - true on success, false on failure
+     * @param Array $input : Validated array of request data
+     * @return bool : true on success, false on failure
      */
-    public function create($request) {
+    public function create($input) {
 
         // Create and add the property
         Property::create([
-            'name' => $request['property-name'],
-            'analytics_id' => $request['property-id'],
-            'logo' => $request['property-logo'],
-            'url' => $request['property-url'],
+            'name' => $input['property-name'],
+            'analytics_id' => $input['property-id'],
+            'place_id' => $input['place-id'],
+            'logo' => $input['property-logo'],
+            'url' => $input['property-url'],
         ]);
 
         return true;
 
+    }
+
+    /**
+     * Updates a property given the new fields
+     * 
+     * @param Integer $id : The property ID
+     * @param Array $input : Validated array of request data
+     */
+    public function update($id, $input)
+    {
+        Property::findOrFail($id)->update([
+            'name' => $input['property-name'],
+            'analytics_id' => $input['property-id'],
+            'place_id' => $input['place-id'],
+            'logo' => $input['property-logo'],
+            'url' => $input['property-url'],
+        ]);
+    }
+
+    /**
+     * Deletes a property
+     * 
+     * @param Integer $id : The property ID
+     */
+    public function delete($id)
+    {
+        $property = Property::findOrFail($id);
+
+        // Delete all attached reports
+        $property->reports->each(function($report, $key) {
+            $report->delete();
+        });
+
+        // Delete the property itself
+        $property->delete();
     }
 
     /**
