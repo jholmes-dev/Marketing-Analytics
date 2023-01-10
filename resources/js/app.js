@@ -3,6 +3,7 @@ import '@popperjs/core';
 
 import.meta.glob([
     '../images/**',
+    './place-lookup'
 ]);
 
 // Property search functionality
