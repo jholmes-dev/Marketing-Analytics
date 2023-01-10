@@ -5,9 +5,7 @@ namespace App\Services;
 use App\Models\Report;
 use App\Models\Property;
 use App\Services\GoogleOAuthService;
-
 use Google\Client;
-
 use Google\Service\AnalyticsData;
 use Google\Service\AnalyticsData\DateRange;
 use Google\Service\AnalyticsData\Dimension;
@@ -20,9 +18,10 @@ use Google\Service\AnalyticsData\RunReportResponse;
 use Google\Service\AnalyticsData\OrderBy;
 use Google\Service\AnalyticsData\MetricOrderBy;
 use Google\Service\AnalyticsData\DimensionOrderBy;
-
 use Google\Service\SearchConsole;
 use Google\Service\SearchConsole\SearchAnalyticsQueryRequest;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class ReportService {
     
@@ -122,7 +121,8 @@ class ReportService {
             'channels' => serialize( $data['channelData'] ),
             'pages' => serialize( $data['pageData'] ),
             'cities' => serialize( $data['cityData'] ),
-            'queries' => serialize($data['queryData'])
+            'queries' => serialize($data['queryData']),
+            'reviews' => serialize($data['reviews'])
         ]);
 
         return $report;
@@ -252,6 +252,9 @@ class ReportService {
             unset($queryData['status']);
             $resData = array_merge($resData, $queryData);
         }
+
+        // Call and add review data
+        $resData['reviews'] = $this->getReviewData();
 
         return $resData;
 
@@ -799,6 +802,40 @@ class ReportService {
             'queryData' => array_slice($queryData, 0, 15)
         );
 
+    }
+
+    /**
+     * Gets place's recent reviews
+     * 
+     * @return Array||NULL
+     */
+    public function getReviewData()
+    {
+        // All variables we need for the call
+        $apiVars = [
+            'place_id' => $this->parentProperty->place_id,
+            'api_key' => config('app.google_places_api_key'),
+            'token' => Str::uuid()
+
+        ];
+
+        // Check for parent property's place ID
+        // Check for Google Places API key
+        if ($apiVars['place_id'] == NULL || $apiVars['api_key'] == NULL) {
+            return NULL;
+        }
+
+        // Make and check request, then return the data
+        $reqUrl = "https://maps.googleapis.com/maps/api/place/details/json?place_id={$apiVars['place_id']}&fields=reviews&reviews_sort=newest&sessiontoken={$apiVars['token']}&key={$apiVars['api_key']}";
+        $apiRes = Http::get($reqUrl);
+        $apiResData = $apiRes->object();
+
+        if ($apiRes->failed() || !isset($apiResData->status) || count($apiResData->result->reviews) == 0) {
+            return NULL;
+        }
+
+        return $apiResData->result->reviews;
+        
     }
 
     /**
