@@ -223,4 +223,12 @@ return [
     'oauth_secret' => env('GOOGLE_CLIENT_SECRET', false),
     'oauth_url' => env('GOOGLE_OAUTH_URL', false),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Google Maps API Key
+    |--------------------------------------------------------------------------
+    |
+    */
+    'google_places_api_key' => env('GOOGLE_PLACES_API_KEY', NULL),
+
 ];

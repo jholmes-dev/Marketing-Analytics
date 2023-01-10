@@ -277,6 +277,55 @@
                 </div>
             </div>
 
+            @if ($report->reviews != NULL)
+            <div class="col-12 report-reviews">
+
+                <div class="report-info-section">
+                    <h3>Recent Reviews</h3>
+                    <p>These are your most recent Google reviews. We recommend garnering at least 1 Google review each week to show potential patients that you are active online.</p>
+                </div>
+
+                <div class="row g-4">
+                    @foreach (unserialize($report->reviews) as $review) 
+                    <div class="col-12 col-md-6 d-flex">
+                        <div class="review-card card">
+                            <div class="card-body">
+                                
+                                <div class="review-content">
+                                    @if ($review->text != '')
+                                    {{ $review->text }}
+                                    @else
+                                    <span class="text-muted">No review content provided</span>
+                                    @endif
+                                </div>
+
+                                <div class="review-footer align-items-center justify-content-end row text-end gy-2">
+                                    <div class="rf-time col-auto">
+                                        {{ date('F j, o', $review->time) }}<br/>
+                                        <span class="text-muted">{{ $review->relative_time_description }}</span>
+                                    </div>
+                                    <div class="rd-rating col-auto">
+                                        @for ($i = 0; $i < 5; $i++)
+                                            @if ($i < $review->rating)
+                                            <i class="bi bi-star-fill"></i>
+                                            @else
+                                            <i class="bi bi-star"></i>
+                                            @endif
+                                        @endfor
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    @if ($loop->iteration == 2)
+                        @php break; @endphp
+                    @endif
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
         </div>
 
     </div>
