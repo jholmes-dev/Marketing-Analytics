@@ -2,8 +2,7 @@ import './bootstrap';
 import '@popperjs/core';
 
 import.meta.glob([
-    '../images/**',
-    './place-lookup'
+    '../images/**'
 ]);
 
 // Property search functionality
