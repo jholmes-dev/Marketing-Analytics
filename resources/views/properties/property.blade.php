@@ -85,13 +85,27 @@
 
 <div class="card">
 
-    <div class="card-header">Property Details</div>
+    <div class="card-header d-flex align-items-center">
+        <div>Property Details</div>
+        <div class="ms-auto">
+            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editPropertyModal">Edit <i class="bi bi-pencil-square"></i></button>
+            <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletePropertyModal">Delete <i class="bi bi-trash3"></i></button>
+        </div>
+    </div>
+
+    <x-property.edit-modal
+        :property=$property
+    />
+    <x-property.delete-modal
+        :property=$property
+    />
 
     <div class="card-body">
 
         <h3>{{ $property->name }}</h3>
         <h5><a href="https://{{ $property->url }}" target="_blank">{{ $property->url }}</a></h5>
-        <h5>Analytics ID: {{ $property->analytics_id }}</h5>
+        <h6>Analytics ID: {{ $property->analytics_id }}</h5>
+        <h6>Place ID: @if ($property->place_id != NULL){{ $property->place_id }}@else <span class="text-muted">Not Set</span> @endif</h5>
 
         <div class="mt-4 w-60 mx-auto text-center">
             <div class="p-3 @if ($property->logo_dark_background) bg-reportdark @endif">
@@ -112,7 +126,7 @@
     
 </div>
 
-<div class="card mt-3">
+<div class="card mt-4">
 
     <div class="card-header align-items-center d-flex">
         Batch Email Settings 
@@ -177,5 +191,9 @@
     @endif
 
 </div>
+
+<x-property.find-place-id-modal 
+    submit-action="editPropertyModal"
+/>
 
 @endsection
