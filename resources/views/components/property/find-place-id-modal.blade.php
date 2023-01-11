@@ -22,5 +22,5 @@
     </div>
 </div>
 
-<script src="https://maps.googleapis.com/maps/api/js?key={{ config('app.google_places_api_key') }}&libraries=places&callback=initMap"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config('app.google_places_js_api_key') }}&libraries=places&callback=initMap"></script>
 <script src="{{ Vite::asset('resources/js/place-lookup.js') }}" type="module"></script>

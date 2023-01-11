@@ -225,10 +225,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Google Maps API Key
+    | Google Maps API Keys
     |--------------------------------------------------------------------------
     |
     */
     'google_places_api_key' => env('GOOGLE_PLACES_API_KEY', NULL),
+    'google_places_js_api_key' => env('GOOGLE_PLACES_JS_API_KEY', NULL),
 
 ];

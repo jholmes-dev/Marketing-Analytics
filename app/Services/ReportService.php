@@ -122,7 +122,7 @@ class ReportService {
             'pages' => serialize( $data['pageData'] ),
             'cities' => serialize( $data['cityData'] ),
             'queries' => serialize($data['queryData']),
-            'reviews' => serialize($data['reviews'])
+            'reviews' => ($data['reviews'] == NULL) ? NULL : serialize($data['reviews'])
         ]);
 
         return $report;
@@ -830,7 +830,7 @@ class ReportService {
         $apiRes = Http::get($reqUrl);
         $apiResData = $apiRes->object();
 
-        if ($apiRes->failed() || !isset($apiResData->status) || count($apiResData->result->reviews) == 0) {
+        if ($apiRes->failed() || !isset($apiResData->status) || !isset($apiResData->result->reviews) || count($apiResData->result->reviews) == 0) {
             return NULL;
         }
 
