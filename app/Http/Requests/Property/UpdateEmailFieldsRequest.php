@@ -24,8 +24,24 @@ class UpdateEmailFieldsRequest extends FormRequest
     public function rules()
     {
         return [
-            'client_name' => 'required|string|max:255',
-            'client_email' => 'required|email|max:255'
+            'client_name' => 'max:255|nullable',
+            'client_email' => 'min:1|max:10|array|required',
+            'client_email.*' => 'email|distinct:ignore_case|max:64'
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'client_email.min' => 'At least one email address is required.',
+            'client_email.required' => 'At least one email address is required.',
+            'client_email.max' => 'You may only specify a maximum of 10 email recipients.',
+            'client_email.*.email' => 'One of your client emails is not a valid email, or was left empty.',
         ];
     }
 }
