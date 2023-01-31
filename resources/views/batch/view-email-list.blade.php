@@ -33,9 +33,8 @@
                 </div>
 
                 <div class="col-4">
-                    <strong>Recipient Details</strong><br/>
-                    {{ $report->property->client_name }}<br/>
-                    {{ $report->property->client_email }}
+                    <strong>Recipient: <em>{{ $report->property->getHelloLine() }}</em></strong><br/>
+                    {{ $report->property->getDisplayClientEmailArray() }}
                 </div>
 
                 <div class="col-4 text-end">
@@ -69,7 +68,7 @@
                     <tbody>
                         @foreach ($reports as $report)
                         <tr>
-                            <td>{{ $report->property->client_email }}</td>
+                            <td>{{ $report->property->getDisplayClientEmailArray() }}</td>
                             <td>{{ $report->property->client_name }}</td>
                         </tr>
                         @endforeach

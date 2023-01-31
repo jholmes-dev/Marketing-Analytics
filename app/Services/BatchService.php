@@ -79,7 +79,7 @@ class BatchService {
         foreach ($reports as $report)
         {
             // Mail the report
-            Mail::to($report->property->client_email)
+            Mail::to($report->property->getClientEmailArray())
                 ->bcc(config('mail.report_bcc'))
                 ->queue( new MailReport($report) );
 

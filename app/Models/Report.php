@@ -284,7 +284,7 @@ class Report extends Model
         }
 
         // Needs to have valid batch email fields
-        if ($this->property->client_name === NULL || $this->property->client_email === NULL)
+        if ($this->property->client_email === NULL || count($this->property->getClientEmailArray()) == 0)
         {
             return false;
         }
