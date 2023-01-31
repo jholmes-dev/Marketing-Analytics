@@ -17,7 +17,7 @@ class MailReport extends Mailable
      * 
      * @var App\Models\Report
      */
-    protected $clientName = 'Client Name';
+    protected $clientHelloLine = 'Hello [Client Name or Blank],';
     protected $reportDate = '2022-01-01';
     protected $reportUrl = 'https://ReportURL.com/ReportID';
 
@@ -30,7 +30,7 @@ class MailReport extends Mailable
     {
         if ($report !== NULL)
         {
-            $this->clientName = $report->property->client_name;
+            $this->clientHelloLine = $report->property->getHelloLine();
             $this->reportDate = $report->start_date;
             $this->reportUrl = route('report.view', $report->id);
         }
@@ -47,7 +47,7 @@ class MailReport extends Mailable
         return $this->view('emails.reports.send')
             ->subject($reportMonth . ' SEO Report')
             ->with([
-                'clientName' => $this->clientName,
+                'clientHelloLine' => $this->clientHelloLine,
                 'reportUrl' => $this->reportUrl,
                 'reportMonth' => $reportMonth
             ]);

@@ -164,8 +164,15 @@
             </div>
 
             <div class="mb-3">
-                <label for="clientEmail">Client Email <i class="bi bi-question-circle" data-bs-toggle="tooltip" data-bs-placement="right" title="The report will be sent to this email."></i></label>
-                <input name="client_email" id="clientEmail" type="email" class="form-control @error('client_email') is-invalid @enderror" value="{{ $property->client_email }}" />
+                <label for="clientEmail">Client Email <i class="bi bi-question-circle" data-bs-toggle="tooltip" data-bs-placement="right" title="The report will be sent to these emails."></i></label>
+                <input type="hidden" id="existingEmailArray" value="{{ $property->getJSONClientEmailArray() }}">
+                <div id="clientEmailWrapper">
+
+                </div>
+
+                <div class="mb-4 mt-2">
+                    <button id="addClientEmail" type="button" class="btn btn-outline-success btn-sm">Add Recipient</button>
+                </div>
 
                 @error('client_email')
                 <span class="invalid-feedback" role="alert">
@@ -196,4 +203,117 @@
     submit-action="editPropertyModal"
 />
 
+@endsection
+
+@section('js')
+<script type="module">
+
+    // Populate the existing emails for batch email settings
+    $(window).ready(function() {
+        populateEmailFields(JSON.parse($('#existingEmailArray').val()));
+    });
+
+    $('#addClientEmail').click(function() {
+        appendClientEmailField();
+    });
+    $('body').on('click', '.delete-email-field', function() {
+        removeClientEmailField($(this).parent());
+    });
+
+    /**
+     * Handles adding a new client email input field
+     * 
+     */
+    function appendClientEmailField(email = '')
+    {
+        if (checkClientEmailMax()) return;
+        $('#clientEmailWrapper').append(generateClientEmailField(email));
+        checkClientEmailMax();
+    }
+
+    /**
+     * Checks if we've hit the maximum amount of fields
+     * 
+     */
+    function checkClientEmailMax()
+    {
+        if ($('.client-email-field').length >= 10) {
+            disableAddEmailButton();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Removes a client email field
+     * 
+     * @param jQueryElement : The parent element of the field to be removed
+     */
+    function removeClientEmailField(ele) 
+    {
+        ele.remove();
+        enableAddEmailButton();
+    }
+
+    /**
+     * Hides the add field button
+     * 
+     */
+    function disableAddEmailButton() 
+    {
+        $('#addClientEmail').hide(0);
+    }
+
+    /**
+     * Shows the add field button
+     * 
+     */
+    function enableAddEmailButton() 
+    {
+        $('#addClientEmail').show(0);
+    }
+
+    /** 
+     * Generates and returns a new client email field
+     * 
+     * @param String value : The existing value, if any
+     * @return jQuery element for insertion into the document
+     */
+    function generateClientEmailField(value = '') 
+    {
+        let parentEle = $('<div>').addClass(
+            'input-group mb-2'
+        );
+        
+        $('<input>').attr({
+            'type': 'email',
+            'name': 'client_email[]',
+            'class': 'form-control client-email-field',
+            'value': value
+        }).appendTo(parentEle);
+
+        $('<button>').attr({
+            'class': 'delete-email-field btn btn-outline-danger',
+            'type': 'button'
+        }).html(
+            '<i class="bi bi-x-lg"></i>'
+        ).appendTo(parentEle);
+
+        return parentEle;
+    }
+
+    /**
+     * Populates the email fields with given input array
+     * 
+     * @param JSON : Object of emails to be inserted
+     */
+    function populateEmailFields(emails)
+    {
+        for (let i = 0; i < emails.length; i++)
+        {
+            appendClientEmailField(emails[i]);
+        }
+    }
+
+</script>
 @endsection

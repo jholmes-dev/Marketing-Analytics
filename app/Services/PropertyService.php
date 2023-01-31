@@ -99,13 +99,13 @@ class PropertyService {
      * 
      * @param Integer $id : The affect property's ID
      * @param String $name : The field for insertion into client_name
-     * @param String $email : The field for insertion into client_email
+     * @param Array[String] $emails : An array of emails for insertion
      */
-    public function updateBatchEmailSettings($id, $name, $email)
+    public function updateBatchEmailSettings($id, $name = null, $emails = [])
     {
         $property = Property::findOrFail($id);
         $property->client_name = $name;
-        $property->client_email = $email;
+        $property->client_email = serialize($emails);
         $property->save();
     }
 
