@@ -1,6 +1,6 @@
 <div style="font-family:'helvetica';font-size: 16px;line-height:1.5;">
 
-	<p style="margin:0 0 16px 0;">Hello {{ $clientName }},</p>
+	<p style="margin:0 0 16px 0;">{{ $clientHelloLine }}</p>
 
 	<p style="margin:0 0 16px 0;">How are you? I hope all is well.</p>
 		
