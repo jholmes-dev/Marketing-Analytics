@@ -17,7 +17,7 @@
                             <label for="propertyName" class="col-form-label">Property Name</label>
                         </div>
                         <div class="col">
-                            <input name="property-name" id="propertyName" type="text" class="form-control" value="{{ $property->name }}" required />
+                            <input name="property-name" id="propertyName" type="text" class="form-control" value="{{ $property->name }}" required>
                         </div>
                     </div>
 
@@ -26,7 +26,7 @@
                             <label for="propertyId" class="col-form-label">Analytics ID</label>
                         </div>
                         <div class="col">
-                            <input name="property-id" id="propertyId" type="text" class="form-control" value="{{ $property->analytics_id }}" required />
+                            <input name="property-id" id="propertyId" type="text" class="form-control" value="{{ $property->analytics_id }}" required>
                         </div>
                     </div>
 
@@ -36,7 +36,7 @@
                         </div>
                         <div class="col">
                             <div class="input-group">
-                                <input name="place-id" id="placeId" type="text" class="form-control" value="{{ $property->place_id }}" />
+                                <input name="place-id" id="placeId" type="text" class="form-control" value="{{ $property->place_id }}">
                                 <button id="findPlaceIdButton" data-bs-toggle="modal" data-bs-target="#findPlaceIdModal" class="btn btn-outline-secondary" type="button">Find This</button>
                             </div>
                         </div>
@@ -47,7 +47,7 @@
                             <label for="propertyLogo" class="col-form-label">Logo URL</label>
                         </div>
                         <div class="col">
-                            <input name="property-logo" id="propertyLogo" type="text" class="form-control" value="{{ $property->logo }}" required />
+                            <input name="property-logo" id="propertyLogo" type="text" class="form-control" value="{{ $property->logo }}">
                         </div>
                     </div>
 
@@ -58,7 +58,7 @@
                         <div class="col">
                             <div class="input-group">
                                 <span class="input-group-text">https://</span>
-                                <input name="property-url" id="propertyUrl" type="text" class="form-control" value="{{ $property->url }}" required />
+                                <input name="property-url" id="propertyUrl" type="text" class="form-control" value="{{ $property->url }}" required>
                             </div>
                         </div>
                     </div>
