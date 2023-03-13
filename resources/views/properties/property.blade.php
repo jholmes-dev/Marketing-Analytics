@@ -109,7 +109,7 @@
 
         <div class="mt-4 w-60 mx-auto text-center">
             <div class="p-3 @if ($property->logo_dark_background) bg-reportdark @endif">
-                <img src="{{ $property->logo }}" alt="{{ $property->name }} Logo" />
+                <x-property.logo :property="$property" />
             </div>
         </div>
 

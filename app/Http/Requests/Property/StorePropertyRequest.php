@@ -26,8 +26,8 @@ class StorePropertyRequest extends FormRequest
         return [
             'property-name' => 'required|unique:properties,name|max:255',
             'property-id' => 'required|unique:properties,analytics_id|max:64',
-            'place-id' => 'required|string|max:256',
-            'property-logo' => 'required|max:255',
+            'place-id' => 'nullable|string|max:255',
+            'property-logo' => 'nullable|max:255',
             'property-url' => 'required|unique:properties,url|max:255',
         ];
     }

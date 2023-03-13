@@ -19,7 +19,7 @@
                         </div>
 
                         <div class="col">
-                            <input name="property-name" id="propertyName" type="text" class="form-control @error('property-name') is-invalid @enderror" required />
+                            <input name="property-name" id="propertyName" type="text" class="form-control @error('property-name') is-invalid @enderror" required>
                         
                             @error('property-name')
                             <span class="invalid-feedback" role="alert">
@@ -37,7 +37,7 @@
                         </div>
 
                         <div class="col">
-                            <input name="property-id" id="propertyId" type="text" class="form-control @error('property-id') is-invalid @enderror" required />
+                            <input name="property-id" id="propertyId" type="text" class="form-control @error('property-id') is-invalid @enderror" required>
                         
                             @error('property-id')
                             <span class="invalid-feedback" role="alert">
@@ -56,7 +56,7 @@
 
                         <div class="col">
                             <div class="input-group">
-                                <input name="place-id" id="placeId" type="text" class="form-control @error('place-id') is-invalid @enderror" />
+                                <input name="place-id" id="placeId" type="text" class="form-control @error('place-id') is-invalid @enderror">
                                 <button id="findPlaceIdButton" data-bs-toggle="modal" data-bs-target="#findPlaceIdModal" class="btn btn-outline-secondary" type="button">Find This</button>
 
                                 @error('place-id')
@@ -76,7 +76,7 @@
                         </div>
 
                         <div class="col">
-                            <input name="property-logo" id="propertyLogo" type="text" class="form-control @error('property-logo') is-invalid @enderror" required />
+                            <input name="property-logo" id="propertyLogo" type="text" class="form-control @error('property-logo') is-invalid @enderror">
                        
                             @error('property-logo')
                             <span class="invalid-feedback" role="alert">
@@ -96,7 +96,7 @@
                         <div class="col">
                             <div class="input-group">
                                 <span class="input-group-text">https://</span>
-                                <input name="property-url" id="propertyUrl" type="text" class="form-control @error('property-url') is-invalid @enderror" required />
+                                <input name="property-url" id="propertyUrl" type="text" class="form-control @error('property-url') is-invalid @enderror" required>
                                 
                                 @error('property-url')
                                 <span class="invalid-feedback" role="alert">
