@@ -17,7 +17,6 @@
 
 <div id="reportBody">
     <div class="container-fluid">
-
         @php
             $startDate = strtotime($report->start_date);
             $endDate = strtotime($report->end_date);
@@ -362,10 +361,10 @@
     function generateSessionsGraph() 
     {
         @php 
-            $dateSessionData = $report->getFormattedArray('date_session', true); 
+            $dateSessionData = $report->getFormattedSessionData(); 
             
             if ($report->hasValidComparisonReport()) {
-                $comparisonDateSessionData = $report->comparisonReport->getFormattedArray('date_session', true);
+                $comparisonDateSessionData = $report->comparisonReport->getFormattedSessionData();
             }
         @endphp
         const sessionsGraph = new Chart($('#sessionsGraph'), {
