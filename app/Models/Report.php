@@ -70,19 +70,7 @@ class Report extends Model
      */
     public function hasValidComparisonReport()
     {
-        if ($this->comparisonReport === null) {
-            return false;
-        }
-
-        // Check that the comparison report has the same available data ranges
-        $curSessionData = $this->getDatabaseArrayKeys('date_session');
-        $prevSessionData = $this->comparisonReport->getDatabaseArrayKeys('date_session');
-
-        if (count($curSessionData) == count($prevSessionData)) {
-            return true;
-        }
-
-        return false;
+        return !($this->comparisonReport === null);
     }
 
     /**
@@ -123,7 +111,7 @@ class Report extends Model
         {
             $returnKeys .= "'";
             if ($date) {
-                $returnKeys .= date('M d', strtotime($dsk));
+                $returnKeys .= strtotime($dsk);
             } else {
                 $returnKeys .= $dsk;
             }
@@ -134,9 +122,68 @@ class Report extends Model
         $returnValues = implode(',', $this->getDatabaseArrayValues($name));
 
         // Return data
-        return [ substr_replace($returnKeys, "", -2), $returnValues ];
-        
-        
+        return [ substr_replace($returnKeys, "", -2), $returnValues ];        
+    }
+
+    /**
+     * Returns the formatted session graph data. This function is separate from
+     * getFormattedArray and necessary due to Google Analytics API not returning 
+     * any data for days with 0 sessions.
+     * 
+     * This function fills in any missing days with blank data sets to the comparison
+     * report graph will match up correctly.
+     * 
+     * @return Array - index 1 is the keys, index 2 is the values
+     */
+    public function getFormattedSessionData() 
+    {
+        // Return data
+        $returnKeys = '';
+        $returnValues = [];
+
+        // Retrieve keys and values to loop through
+        $arrayKeys = $this->getDatabaseArrayKeys("date_session");
+        $arrayValues = $this->getDatabaseArrayValues("date_session");
+
+        // Iterators for start and end times for the report
+        $iterDate = strtotime($this->start_date);
+        $endDate = strtotime($this->end_date);
+
+        // Iterator for the current index of the values array
+        $valIterator = 0;
+
+        // Loop through each key, if there is a date missing fill it in
+        foreach ($arrayKeys as $k => $dsk) 
+        {
+            // While dates are missing, create dates and add to results
+            while ($iterDate !== strtotime($dsk) && $iterDate <= $endDate)
+            {   
+                $returnKeys .= "'";
+                $returnKeys .= date("M, d", $iterDate);
+                $returnKeys .= "', ";
+
+                array_push($returnValues, 0);
+                $iterDate = strtotime("+ 1 day", $iterDate);
+            }
+            
+            // Add current day key
+            $returnKeys .= "'";
+            $returnKeys .= date("M, d", strtotime($dsk));
+            $returnKeys .= "', ";
+
+            // Add current key key
+            array_push($returnValues, $arrayValues[$valIterator]);
+            $valIterator++;
+
+            // Increment date iterator
+            $iterDate = strtotime("+ 1 day", $iterDate);
+        }
+
+        // Value data
+        $returnValues = implode(',', $returnValues);
+
+        // Return data
+        return [ substr_replace($returnKeys, "", -2), $returnValues ];    
     }
 
     /**

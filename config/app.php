@@ -219,7 +219,6 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'oauth_credentials' => env('GOOGLE_APPLICATION_CREDENTIALS', 'no'),
     'oauth_secret' => env('GOOGLE_CLIENT_SECRET', false),
     'oauth_url' => env('GOOGLE_OAUTH_URL', false),
 
