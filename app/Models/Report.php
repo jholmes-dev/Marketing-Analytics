@@ -311,7 +311,7 @@ class Report extends Model
             $comparisonColor = 'text-danger';
         }
 
-        $comparisonPercent = round(abs(1 - ($current / $previous)), 4);
+        $comparisonPercent = ($previous > 0) ? round(abs(1 - ($current / $previous)), 4) : $current;
 
         return '<span class="' . $comparisonColor . '">' . $comparisonArrow . (String)($comparisonPercent * 100) . '%</span>';
 
