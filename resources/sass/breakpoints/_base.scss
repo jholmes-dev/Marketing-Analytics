@@ -17,6 +17,10 @@ iframe, img {
     background-color: $reportDark!important;
 }
 
+.no-whitespace {
+    white-space: nowrap; 
+}
+
 /*****************
 ** Properties
 *****************/
@@ -123,12 +127,15 @@ iframe, img {
 
     .report-trafficAndAudience {
         .rt-session-wrapper {
-            padding-bottom: 20px!important;
+            padding-bottom: 18px!important;
         }
     }
 
     .report-devicesAndBrowsers {
 
+        .rd-browser-wrapper {
+            padding-bottom: 17px!important
+        }
         .rd-device-wrapper {
             padding-bottom: 19px!important;
         }
@@ -148,7 +155,7 @@ iframe, img {
     #reportFooter {
         background: #263238;
         color: white;
-        padding: 2rem 0 .5rem;
+        padding: 2rem 0;
         margin: 2rem 0 0;
 
         h2 {

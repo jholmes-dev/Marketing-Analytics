@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Report extends Model
 {
@@ -210,6 +211,104 @@ class Report extends Model
     }
 
     /**
+     * Gets total number of clicks from query data
+     * 
+     * @return integer the number of total clicks from the report's query data
+     */
+    public function getTotalClicks()
+    {
+        $totalClicks = 0;
+        $queryData = unserialize($this->queries);
+
+        // Check for valid data format. The data format of 'query' changed on
+        // 2024/05, this checks to ensure the new format is being used
+        // for backwards compatibility
+        if (!isset($queryData[0]['query'])) return 0;
+
+        for ($i = 0; $i < count($queryData); $i++)
+        {
+            $totalClicks += $queryData[$i]['clicks'];
+        }
+
+        return $totalClicks;
+    }
+
+    /**
+     * Gets total number of clicks from query data
+     * 
+     * @return integer the number of total clicks from the report's query data
+     */
+    public function getTotalImpressions()
+    {
+        $totalImpressions = 0;
+        $queryData = unserialize($this->queries);
+
+        // Check for valid data format. The data format of 'query' changed on
+        // 2024/05, this checks to ensure the new format is being used
+        // for backwards compatibility
+        if (!isset($queryData[0]['query'])) return 0;
+
+        for ($i = 0; $i < count($queryData); $i++)
+        {
+            $totalImpressions += $queryData[$i]['impressions'];
+        }
+
+        return $totalImpressions;
+    }
+
+    /**
+     * Returns the number of sessions related to the given
+     * page, or -1 if the page could not be found
+     * 
+     * @param $pageTitle the title of the page to search for
+     * @return Integer the number of sessions related to the given page title, or -1 if the page could not be found
+     */
+    public function getPageSessions($pageTitle)
+    {
+        $pageData = unserialize($this->pages);
+        $finalSessions = -1;
+
+        foreach ($pageData as $page => $sessions)
+        {
+            if ($page == $pageTitle)
+            {
+                $finalSessions = $sessions;
+                break;
+            }
+        }
+
+        return $finalSessions;
+    }
+
+    /**
+     * Returns a display-ready string of comparison HTML for direct
+     * display in a report. For data point: Total Clicks
+     * 
+     * @return String HTML
+     */
+    public function getClicksComparisonString()
+    {
+        if (!$this->hasValidComparisonReport()) {
+            return '';
+        }
+        return $this->formatDataToHtml($this->getTotalClicks(), $this->comparisonReport->getTotalClicks());
+    }
+
+    /**
+     * Returns a display-ready string of comparison HTML for direct
+     * display in a report. For data point: Total Impressions
+     * 
+     * @return String HTML
+     */
+    public function getImpressionsComparisonString()
+    {
+        if (!$this->hasValidComparisonReport()) {
+            return '';
+        }
+        return $this->formatDataToHtml($this->getTotalImpressions(), $this->comparisonReport->getTotalImpressions());
+    }
+
+    /**
      * Returns a display-ready string of comparison HTML for direct
      * display in a report. For data point: Total Users
      * 
@@ -294,6 +393,48 @@ class Report extends Model
     }
 
     /**
+     * Returns a display-ready string of comparison HTML for direct
+     * display in a report. For data point: General (duh)
+     * 
+     * @return String HTML
+     */
+    public function getComparisonString($dataName)
+    {
+        if (!$this->hasValidComparisonReport() || !$this[$dataName] || !$this->comparisonReport[$dataName]) {
+            return '';
+        }
+        return $this->formatDataToHtml($this[$dataName], $this->comparisonReport[$dataName]);
+    }
+
+    /**
+     * Returns a display-ready string of comparison HTML for direct
+     * display in a report. For data point: Page Sessions
+     * 
+     * This function searches for a given query name in the current
+     * and comparison reports. If both are found it will return the
+     * comparison data.
+     * 
+     * @param String $pageTitle the title of the page to search for
+     * @return String HTML
+     */
+    public function getPageComparisonString($pageTitle)
+    {
+        if (!$this->hasValidComparisonReport()) {
+            return '';
+        }
+
+        $currentPageSessions = $this->getPageSessions($pageTitle);
+        $previousPageSessions = $this->comparisonReport->getPageSessions($pageTitle);
+
+        if ($currentPageSessions === -1) 
+            return "--";
+        else if ($previousPageSessions === -1) 
+            return '<span class="text-success">New</span>';
+
+        return $this->formatDataToHtml($currentPageSessions, $previousPageSessions);
+    }
+
+    /**
      * Helper function for returning formatted HTML from two comparison values
      * 
      * @param Integer $current : The current month's value
@@ -306,9 +447,12 @@ class Report extends Model
         if ($current > $previous) {
             $comparisonArrow = '<i class="bi bi-arrow-up-short"></i>';
             $comparisonColor = 'text-success';
-        } else {
+        } else if ($current < $previous) {
             $comparisonArrow = '<i class="bi bi-arrow-down-short"></i>';
             $comparisonColor = 'text-danger';
+        } else {
+            $comparisonArrow = '<i class="bi bi-dash"></i>';
+            $comparisonColor = 'text-info';
         }
 
         $comparisonPercent = ($previous > 0) ? round(abs(1 - ($current / $previous)), 4) : $current;
