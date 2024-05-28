@@ -42,7 +42,7 @@
             
             <div class="col-12 rt-info report-info-section">
                 <h3>Traffic and Audience Overview</h3>
-                <p>This section shows your traffic and audience metrics for the current report period compared to the previous period.</p>
+                <p>This section shows your traffic and audience metrics for the current reporting period compared to the previous period.</p>
             </div>
 
             <div class="col-12 rt-boxes">
@@ -112,7 +112,7 @@
                     <div class="col-6 col-lg-3">
 
                         <x-report.info-box
-                            title="Events per session"
+                            title="Events Per Session"
                             :content="$report->events_per_session"
                             tooltip="The average number of events triggered per user session on your website. An event is triggered by clicking a site link, submitting a form, playing a video, etc."
                             :footer="$report->getComparisonString('events_per_session')"    
@@ -136,7 +136,7 @@
                     <div class="col-6 col-lg-3">
 
                         <x-report.info-box
-                            title="Sessions per user"
+                            title="Sessions Per User"
                             :content="$report->sessions_per_user"
                             tooltip="The average number of sessions a user initiates on your website."
                             :footer="$report->getComparisonString('sessions_per_user')"    
@@ -321,13 +321,13 @@
 
             <div class="report-info-section">
                 <h3>Site Behavior</h3>
-                <p>This section shows the metrics of your website content<br/>during the current reporting period compared to the previous period.</p>
+                <p>This section shows the metrics of your website content during the current reporting period compared to the previous period.</p>
             </div>
 
-            <div class="col-12 rd-channel">
+            <div class="col-12 col-lg rd-channel">
                 <div class="report-info-section">
                     <h3>Most Visited Pages</h3>
-                    <p>These are the most visited pages on your website.</p>
+                    <p>These are the most visited<br/>pages on your website.</p>
                 </div>
 
                 <div class="rd-pages-wrapper bg-white">
@@ -361,6 +361,44 @@
                     </table>
                 </div>
             </div>
+
+            @if ($report->post_data != NULL)
+            <div class="col-12 col-lg-6 rd-channel">
+                <div class="report-info-section">
+                    <h3>New Content Added</h3>
+                    <p>These are the new blog posts and pages that were added to your website during this reporting period.</p>
+                </div>
+
+                <div class="rd-pages-wrapper bg-white">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Post Title</th>
+                                <th scope="col">Sessions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (unserialize($report->post_data) as $post) 
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td class="w-100">{{ $post['post_title'] }}</td>
+                                <td class="text-end">{{ $post['sessions'] }}</td>
+                            </tr>
+
+                            @php 
+                            if ($loop->iteration == 10) {
+                                break;
+                            }
+                            @endphp
+                            @endforeach
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @endif
 
             @if ($report->reviews != NULL)
             <div class="col-12 report-reviews">

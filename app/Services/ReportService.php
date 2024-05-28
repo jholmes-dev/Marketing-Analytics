@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Report;
 use App\Models\Property;
 use App\Services\GoogleOAuthService;
+use App\Services\WordPressPostService;
 use Google\Client;
 use Google\Service\AnalyticsData;
 use Google\Service\AnalyticsData\DateRange;
@@ -51,6 +52,11 @@ class ReportService {
     public $searchConsoleService;
 
     /**
+     * @var App\Services\WordPressPostService
+     */
+    public $wpPostService;
+
+    /**
      * Report variables
      * 
      * @var Int
@@ -87,6 +93,9 @@ class ReportService {
         $this->client = $oauthService->generateOAuthClient();
         $this->client->setAccessToken($this->token);
 
+        // Generate WP Post Service
+        $this->wpPostService = new WordPressPostService();
+
         // Generate Analytics Service
         $this->analyticsService = new AnalyticsData($this->client);
 
@@ -101,8 +110,7 @@ class ReportService {
      * @return App\Models\Report
      */
     public function createReport($data)
-    {
-
+    {        
         $data = $this->applyDataFilters($data);
 
         $report = Report::create([
@@ -125,7 +133,8 @@ class ReportService {
             'pages' => serialize( $data['pageData'] ),
             'cities' => serialize( $data['cityData'] ),
             'queries' => serialize($data['queryData']),
-            'reviews' => ($data['reviews'] == NULL) ? NULL : serialize($data['reviews'])
+            'reviews' => ($data['reviews'] == NULL) ? NULL : serialize($data['reviews']),
+            'post_data' => ($data['postSessionData'] == NULL) ? NULL : serialize($data['postSessionData']),
         ]);
 
         return $report;
@@ -265,6 +274,31 @@ class ReportService {
 
         // Call and add review data
         $resData['reviews'] = $this->getReviewData();
+
+        // Retrieve website posts within date range and grab their analytics data
+        $this->wpPostService->setBlogUrl($this->parentProperty->url);
+        $this->wpPostService->loadPosts($this->reportStartDate, $this->reportEndDate);
+        $reportPosts = $this->wpPostService->getPostData();
+
+        $postSessionData = [];
+        foreach ($reportPosts as $post)
+        {
+            $urlStartPos = strpos($post['link'], '://');
+            $subUrl = substr($post['link'], $urlStartPos + 3);
+            $postData = $this->getPageMetrics($subUrl);
+
+            if (!$postData['status']) {
+                return $postData;
+            }
+            unset($postData['status']);
+
+            $postData['pageSessionData']['post_title'] = $post['title']['rendered'];
+
+            array_push($postSessionData, $postData['pageSessionData']);
+        }
+
+        // Append post data
+        $resData['postSessionData'] = $postSessionData;
 
         return $resData;
 
@@ -858,6 +892,70 @@ class ReportService {
 
         return $apiResData->result->reviews;
         
+    }
+
+    /**
+     * Retrieve's a specific page's metrics
+     * 
+     * @param String $pageUrl The full page url to filter by. Excluding http/https. Eg: example.com/path
+     * @return Array
+     */
+    public function getPageMetrics($pageUrl) 
+    {
+
+        try {
+
+            $response = $this->analyticsService->properties->runReport(
+                'properties/' . $this->analyticsId,
+                new RunReportRequest(
+                [
+                    'dateRanges' => [
+                        new DateRange([
+                            'start_date' => $this->reportStartDate,
+                            'end_date' => $this->reportEndDate,
+                        ]),
+                    ],
+                    'dimensions' => [
+                        new Dimension([
+                            'name' => 'fullPageUrl',
+                        ]),
+                    ],
+                    'metrics' => [
+                        new Metric([
+                            'name' => 'sessions',
+                        ]),
+                    ],
+                    'dimensionFilter' => [
+                        'filter' => new Filter([
+                            'fieldName' => 'fullPageUrl',
+                            'stringFilter' => new StringFilter([
+                                'value' => $pageUrl,
+                            ])
+                        ]),
+                    ]
+                ])
+            );
+
+        } catch (\Exception $e) {
+            
+            return Array(
+                'status' => false,
+                'error' => $e
+            );
+
+        }
+
+        $pageData = [
+            "url" => $response['rows'][0]['dimensionValues'][0]['value'],
+            "sessions" => $response['rows'][0]['metricValues'][0]['value'],
+        ];
+
+        // Return data
+        return Array(
+            'status' => true,
+            'pageSessionData' => $pageData,
+        );
+
     }
 
     /**
