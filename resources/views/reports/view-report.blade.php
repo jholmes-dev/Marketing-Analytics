@@ -321,7 +321,7 @@
 
             <div class="report-info-section">
                 <h3>Site Behavior</h3>
-                <p>This section shows the metrics of your website content during the current reporting period compared to the previous period.</p>
+                <p>This section shows the metrics of your website content<br/>during the current reporting period compared to the previous period.</p>
             </div>
 
             <div class="col-12 col-lg rd-channel">
