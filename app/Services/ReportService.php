@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Report;
 use App\Models\Property;
 use App\Services\GoogleOAuthService;
+use App\Services\WordPressPostService;
 use Google\Client;
 use Google\Service\AnalyticsData;
 use Google\Service\AnalyticsData\DateRange;
@@ -22,6 +23,7 @@ use Google\Service\SearchConsole;
 use Google\Service\SearchConsole\SearchAnalyticsQueryRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class ReportService {
     
@@ -48,6 +50,11 @@ class ReportService {
      * 
      */
     public $searchConsoleService;
+
+    /**
+     * @var App\Services\WordPressPostService
+     */
+    public $wpPostService;
 
     /**
      * Report variables
@@ -86,6 +93,9 @@ class ReportService {
         $this->client = $oauthService->generateOAuthClient();
         $this->client->setAccessToken($this->token);
 
+        // Generate WP Post Service
+        $this->wpPostService = new WordPressPostService();
+
         // Generate Analytics Service
         $this->analyticsService = new AnalyticsData($this->client);
 
@@ -100,8 +110,7 @@ class ReportService {
      * @return App\Models\Report
      */
     public function createReport($data)
-    {
-
+    {        
         $data = $this->applyDataFilters($data);
 
         $report = Report::create([
@@ -115,6 +124,8 @@ class ReportService {
             'engagement_rate' => $data['engagementRate'],
             'events_per_session' => $data['eventsPerSession'],
             'sessions_per_user' => $data['sessionsPerUser'],
+            'new_users' => $data['newUsers'],
+            'average_session_duration' => $data['averageSessionDuration'],
             'date_session' => serialize( $data['dateSessionData'] ),
             'browsers' => serialize( $data['browserData'] ),
             'devices' => serialize( $data['deviceData'] ),
@@ -122,7 +133,8 @@ class ReportService {
             'pages' => serialize( $data['pageData'] ),
             'cities' => serialize( $data['cityData'] ),
             'queries' => serialize($data['queryData']),
-            'reviews' => ($data['reviews'] == NULL) ? NULL : serialize($data['reviews'])
+            'reviews' => ($data['reviews'] == NULL) ? NULL : serialize($data['reviews']),
+            'post_data' => ($data['postSessionData'] == NULL) ? NULL : serialize($data['postSessionData']),
         ]);
 
         return $report;
@@ -149,6 +161,13 @@ class ReportService {
         foreach ($data['cityData'] as $city => $imp) {
             if ($city == '(not set)') {
                 unset($data['cityData'][$city]);
+            }
+        }
+
+        // Filter out `(not set)` from page data
+        foreach ($data['pageData'] as $page => $imp) {
+            if ($page == '(not set)') {
+                unset($data['pageData'][$page]);
             }
         }
 
@@ -256,6 +275,31 @@ class ReportService {
         // Call and add review data
         $resData['reviews'] = $this->getReviewData();
 
+        // Retrieve website posts within date range and grab their analytics data
+        $this->wpPostService->setBlogUrl($this->parentProperty->url);
+        $this->wpPostService->loadPosts($this->reportStartDate, $this->reportEndDate);
+        $reportPosts = $this->wpPostService->getPostData();
+
+        $postSessionData = [];
+        foreach ($reportPosts as $post)
+        {
+            $urlStartPos = strpos($post['link'], '://');
+            $subUrl = substr($post['link'], $urlStartPos + 3);
+            $postData = $this->getPageMetrics($subUrl);
+
+            if (!$postData['status']) {
+                return $postData;
+            }
+            unset($postData['status']);
+
+            $postData['pageSessionData']['post_title'] = $post['title']['rendered'];
+
+            array_push($postSessionData, $postData['pageSessionData']);
+        }
+
+        // Append post data
+        $resData['postSessionData'] = $postSessionData;
+
         return $resData;
 
     }
@@ -303,6 +347,12 @@ class ReportService {
                         ]),
                         new Metric([
                             'name' => 'sessionsPerUser',
+                        ]),
+                        new Metric([
+                            'name' => 'newUsers',
+                        ]),
+                        new Metric([
+                            'name' => 'averageSessionDuration',
                         ])
                     ],
                     'dimensionFilter' => [
@@ -336,6 +386,8 @@ class ReportService {
                 'engagementRate' => $responseRow->getMetricValues()[3]->getValue(),
                 'eventsPerSession' => $responseRow->getMetricValues()[4]->getValue(),
                 'sessionsPerUser' => $responseRow->getMetricValues()[5]->getValue(),
+                'newUsers' => $responseRow->getMetricValues()[6]->getValue(),
+                'averageSessionDuration' => $responseRow->getMetricValues()[7]->getValue(),
             );
 
         } else {
@@ -773,8 +825,8 @@ class ReportService {
                     'startDate' => $this->reportStartDate,
                     'endDate' => $this->reportEndDate,
                     'dimensions' => [ 'query' ],
-                    'type' => 'web'
-                    
+                    'type' => 'web',
+                    'rowLimit' => '100',
                 ])
             );
 
@@ -787,19 +839,23 @@ class ReportService {
 
         }
 
-        // Adjust data
+        // Test data
         $queryData = [];
-        foreach ($response->getRows() as $row) {
-            $queryData[$row->getKeys()[0]] = $row->getImpressions();
+        for ($i = 0; $i < count($response['rows']); $i++)
+        {
+            array_push($queryData, [
+                'query' => $response['rows'][$i]['keys'][0],
+                'clicks' => $response['rows'][$i]['clicks'],
+                'impressions' => $response['rows'][$i]['impressions'],
+                'position' => $response['rows'][$i]['position'],
+                'ctr' => $response['rows'][$i]['ctr'],
+            ]);
         }
-
-        // Sort array by values
-        arsort($queryData);
 
         // Return data
         return Array(
             'status' => true,
-            'queryData' => array_slice($queryData, 0, 15)
+            'queryData' => $queryData,
         );
 
     }
@@ -836,6 +892,70 @@ class ReportService {
 
         return $apiResData->result->reviews;
         
+    }
+
+    /**
+     * Retrieve's a specific page's metrics
+     * 
+     * @param String $pageUrl The full page url to filter by. Excluding http/https. Eg: example.com/path
+     * @return Array
+     */
+    public function getPageMetrics($pageUrl) 
+    {
+
+        try {
+
+            $response = $this->analyticsService->properties->runReport(
+                'properties/' . $this->analyticsId,
+                new RunReportRequest(
+                [
+                    'dateRanges' => [
+                        new DateRange([
+                            'start_date' => $this->reportStartDate,
+                            'end_date' => $this->reportEndDate,
+                        ]),
+                    ],
+                    'dimensions' => [
+                        new Dimension([
+                            'name' => 'fullPageUrl',
+                        ]),
+                    ],
+                    'metrics' => [
+                        new Metric([
+                            'name' => 'sessions',
+                        ]),
+                    ],
+                    'dimensionFilter' => [
+                        'filter' => new Filter([
+                            'fieldName' => 'fullPageUrl',
+                            'stringFilter' => new StringFilter([
+                                'value' => $pageUrl,
+                            ])
+                        ]),
+                    ]
+                ])
+            );
+
+        } catch (\Exception $e) {
+            
+            return Array(
+                'status' => false,
+                'error' => $e
+            );
+
+        }
+
+        $pageData = [
+            "url" => $response['rows'][0]['dimensionValues'][0]['value'],
+            "sessions" => $response['rows'][0]['metricValues'][0]['value'],
+        ];
+
+        // Return data
+        return Array(
+            'status' => true,
+            'pageSessionData' => $pageData,
+        );
+
     }
 
     /**
