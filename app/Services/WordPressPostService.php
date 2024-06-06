@@ -9,8 +9,16 @@ use Illuminate\Support\Facades\Log;
  * Handles retrieval of data from recent posts for a given website
  * Ties into WordPress' REST API
  */
-class WordPressPostService {
-    
+class WordPressPostService 
+{
+    /**
+     * The status of the WordPress Post Service
+     * Will be false if the posts are not loaded, or failed to load
+     * 
+     * @var Boolean
+     */
+    public $status = false;
+
     /**
      * The blog URL we'll be sending requests to
      * 
@@ -73,11 +81,18 @@ class WordPressPostService {
             $urlParams .= "&before=" . $endDate->format('Y-m-d') . "T00:00:00";
         }
 
-        $response = Http::get($this->blogUrl . $this->restPostPath . $urlParams);
+        try {
+            $response = Http::get($this->blogUrl . $this->restPostPath . $urlParams);
 
-        if (!$response->successful()) return;
+            if ($response->successful() && $response->json()) {
+                $this->status = true;
+                $this->posts = $response->json();
+            }
+        } catch (\Exception $e)
+        {
+            Log::error("Could not contact {$this->blogUrl} for WordPress posts: {$e}");
+        }
 
-        $this->posts = $response->json();
     }
 
     /**
