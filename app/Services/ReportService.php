@@ -945,9 +945,11 @@ class ReportService {
 
         }
 
+        $pageSessions = isset($response['rows'][0]['dimensionValues'][0]['value']) ? $response['rows'][0]['metricValues'][0]['value'] : 0;
+
         $pageData = [
-            "url" => $response['rows'][0]['dimensionValues'][0]['value'],
-            "sessions" => $response['rows'][0]['metricValues'][0]['value'],
+            "url" => $pageUrl,
+            "sessions" => $pageSessions
         ];
 
         // Return data
